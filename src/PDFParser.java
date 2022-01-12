@@ -34,41 +34,43 @@ public class PDFParser
     	String directoryName="E:\\Research Papers";
     	List<File> filess = new ArrayList<File>();
     	listf(directoryName, filess);
-    	filess.forEach(System.out::println);
-    	
-		//SUBFOLDERFILES
-		/*
-    	File file = new File("E:\\Research Papers\\IoT\\07995046.pdf");
-    	
-        try (PDDocument document = Loader.loadPDF(file);)
-        {
-            AccessPermission ap = document.getCurrentAccessPermission();
-            if (!ap.canExtractContent())
-            {
-                throw new IOException("OOPS! It seems that you don't have permission to extract text");
-            }
+//    	filess.forEach(System.out::println);
 
-            PDFTextStripper stripper = new PDFTextStripper();
-            stripper.setSortByPosition(true);
 
-            for (int p = 1; p <= document.getNumberOfPages(); ++p)
+    	for(int i = 0;i<=6;i++){
+    		
+    		System.out.print("######################################################################");
+    		File file = new File(filess.get(i).getPath());
+        	
+            try (PDDocument document = Loader.loadPDF(file);)
             {
-                stripper.setStartPage(p);
-                stripper.setEndPage(p);
-                String text = stripper.getText(document);
-                String pageStr = String.format("page %d:", p);
-                System.out.println(pageStr);
-                for (int i = 0; i < pageStr.length(); ++i)
+                AccessPermission ap = document.getCurrentAccessPermission();
+                if (!ap.canExtractContent())
                 {
-                    System.out.print("-");
+                    throw new IOException("OOPS! It seems that you don't have permission to extract text");
                 }
-                System.out.println();
-                System.out.println(text.trim());
-                System.out.println();
 
+                PDFTextStripper stripper = new PDFTextStripper();
+                stripper.setSortByPosition(true);
+
+                for (int p = 1; p <= document.getNumberOfPages(); ++p)
+                {
+                    stripper.setStartPage(p);
+                    stripper.setEndPage(p);
+                    String text = stripper.getText(document);
+                    String pageStr = String.format("page %d:", p);
+                    System.out.println(pageStr);
+                    for (int j = 0; j < pageStr.length(); ++j)
+                    {
+                        System.out.print("-");
+                    }
+                    System.out.println();
+                    System.out.println(text.trim());
+                    System.out.println();
+
+                }
             }
-        }
-        */
+    	}
         
     }
 
