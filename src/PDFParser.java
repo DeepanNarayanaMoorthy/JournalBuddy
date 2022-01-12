@@ -1,5 +1,9 @@
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.apache.commons.io.FilenameUtils;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -10,55 +14,30 @@ import org.apache.pdfbox.text.PDFTextStripper;
 public class PDFParser
 {
 
-	static void RecursivePrint(File[] arr, int index, int level)
-	{
-		if (index == arr.length)
-			return;
+	public static void listf(String directoryName, List<File> files) {
+	    File directory = new File(directoryName);
 
-		for (int i = 0; i < level; i++)
-			System.out.print("\t");
-
-		if (arr[index].isFile())
-			System.out.println(arr[index].getName());
-
-		else if (arr[index].isDirectory()) {
-			System.out.println("[" + arr[index].getName()
-							+ "]");
-
-			RecursivePrint(arr[index].listFiles(), 0,
-						level + 1);
-		}
-
-		RecursivePrint(arr, ++index, level);
+	    File[] fList = directory.listFiles();
+	    if(fList != null)
+	        for (File file : fList) {      
+	            if (file.isFile() && FilenameUtils.getExtension(file.getName()).equals("pdf")) {
+	                files.add(file);
+	            } else if (file.isDirectory()) {
+	                listf(file.getAbsolutePath(), files);
+	            }
+	        }
 	}
-
+	
     public static void main(String[] args) throws IOException
     {
     	
-    	//SUBFOLDERFILES
-    	/*
-		String maindirpath
-		= "E:\\Research Papers";
-		
-		File maindir = new File(maindirpath);
-		
-		if (maindir.exists() && maindir.isDirectory()) {
-			
-		File arr[] = maindir.listFiles();
-		
-		System.out.println(
-			"**********************************************");
-		System.out.println(
-			"Files from main directory : " + maindir);
-		System.out.println(
-			"**********************************************");
-		
-		RecursivePrint(arr, 0, 0);
-		
-		}
-		*/
+    	String directoryName="E:\\Research Papers";
+    	List<File> filess = new ArrayList<File>();
+    	listf(directoryName, filess);
+    	filess.forEach(System.out::println);
+    	
 		//SUBFOLDERFILES
-		
+		/*
     	File file = new File("E:\\Research Papers\\IoT\\07995046.pdf");
     	
         try (PDDocument document = Loader.loadPDF(file);)
@@ -89,6 +68,7 @@ public class PDFParser
 
             }
         }
+        */
         
     }
 
