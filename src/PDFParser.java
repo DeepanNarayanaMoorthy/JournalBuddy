@@ -2,9 +2,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -34,19 +32,17 @@ public class PDFParser
     public static void main(String[] args) throws IOException
     {
     	
-    	String directoryName="E:\\Research Papers\\Integrated Circuit";
+    	List<String> directoryName= new ArrayList<String>();
+    	directoryName.add("E:\\Research Papers\\Integrated Circuit");
+    	directoryName.add("E:\\Research Papers\\Image Processing");
     	List<File> filess = new ArrayList<File>();
-    	List<Integer> iterr = new ArrayList<Integer>();
-    	listf(directoryName, filess);
+    	directoryName.parallelStream().forEach((directoryNameIter) -> {
+    		listf(directoryNameIter, filess);
+    	});
 
-    	for(int i = 0;i <= filess.size(); i++){
-    		iterr.add(i);
-    	}
-    	iterr.parallelStream().forEach((iterrnum) -> {
+    	filess.parallelStream().forEach((filessiter) -> {
 
-    		System.out.print("######################################################################");
-//    		File file = new File(filess.get(i).getPath());
-    		File file = filess.get(iterrnum);
+    		File file = filessiter;
             try (PDDocument document = Loader.loadPDF(file);)
             {
                 AccessPermission ap = document.getCurrentAccessPermission();
@@ -57,7 +53,7 @@ public class PDFParser
 
                 PDFTextStripper stripper = new PDFTextStripper();
                 stripper.setSortByPosition(true);
-                final String filenamenow=new String("E:\\Research Papers\\New folder\\"+String.valueOf(iterrnum)+".txt");
+                final String filenamenow=new String("E:\\Research Papers\\New folder\\"+file.getName()+".txt");
 				try{
 					File myObj = new File(filenamenow);
 					if (myObj.createNewFile()) {
@@ -79,26 +75,18 @@ public class PDFParser
                     String text = stripper.getText(document);
                     String pageStr = String.format("page %d:", p);
                     myWriter.write(pageStr);
-//                    System.out.println(pageStr);
-                    for (int j = 0; j < pageStr.length(); ++j)
-                    {
-                        System.out.print("-");
-                    }
+                    myWriter.write("\n-----------------------\n");
                     myWriter.write("");
-//                    System.out.println();
                     myWriter.write(text.trim());
-//                    System.out.println(text.trim());
                     myWriter.write("");
-//                    System.out.println();
                 }
                 myWriter.close();
                 
             } catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-
-            });
+       });
+    	System.out.print("###########DOME###############");
     }
         
 }
