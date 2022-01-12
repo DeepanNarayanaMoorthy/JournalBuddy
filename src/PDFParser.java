@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
@@ -14,7 +15,16 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 public class PDFParser
 {
-
+    
+	public static String getNextWord(String str, String word) {
+	    String[] strArr = str.split(word);
+	    if(strArr.length > 1) {
+	        strArr = strArr[1].trim().split(" ");
+	        return strArr[0];
+	    }
+	    return null;
+	}
+	
 	public static void listf(String directoryName, List<File> files) {
 	    File directory = new File(directoryName);
 
@@ -36,12 +46,13 @@ public class PDFParser
     	directoryName.add("E:\\Research Papers\\Integrated Circuit");
     	directoryName.add("E:\\Research Papers\\Image Processing");
     	List<File> filess = new ArrayList<File>();
+    	
     	directoryName.parallelStream().forEach((directoryNameIter) -> {
     		listf(directoryNameIter, filess);
     	});
 
     	filess.parallelStream().forEach((filessiter) -> {
-
+    		List<Integer> indexess=new ArrayList<Integer>();
     		File file = filessiter;
             try (PDDocument document = Loader.loadPDF(file);)
             {
@@ -53,7 +64,7 @@ public class PDFParser
 
                 PDFTextStripper stripper = new PDFTextStripper();
                 stripper.setSortByPosition(true);
-                final String filenamenow=new String("E:\\Research Papers\\New folder\\"+file.getName()+".txt");
+                final String filenamenow=new String("E:\\Research Papers\\New folder\\"+file.getName()+".bin");
 				try{
 					File myObj = new File(filenamenow);
 					if (myObj.createNewFile()) {
@@ -75,6 +86,13 @@ public class PDFParser
                     String text = stripper.getText(document);
                     String pageStr = String.format("page %d:", p);
                     myWriter.write(pageStr);
+                    String[] arrOfStr = text.trim().toLowerCase().split("digital object identifier");
+                    if(arrOfStr.length==2) {
+                    	arrOfStr = arrOfStr[1].toLowerCase().split(" ");
+                    	System.out.print("\n88888888"+file.getName()+"88888888\n");
+                    	System.out.print(arrOfStr[1]);
+                    	System.out.print("\n");
+                    }
                     myWriter.write("\n-----------------------\n");
                     myWriter.write("");
                     myWriter.write(text.trim());
