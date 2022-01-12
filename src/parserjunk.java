@@ -14,7 +14,7 @@ import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 
-public class PDFParser
+public class parserjunk
 {
 
 	public static void listf(String directoryName, List<File> files) {
