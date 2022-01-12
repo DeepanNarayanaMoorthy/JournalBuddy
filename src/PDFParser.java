@@ -3,6 +3,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
@@ -41,7 +42,7 @@ public class PDFParser
 	
     public static void main(String[] args) throws IOException
     {
-    	
+    	Hashtable<String, String> doi_dict = new Hashtable<String, String>();
     	List<String> directoryName= new ArrayList<String>();
     	directoryName.add("E:\\Research Papers\\Integrated Circuit");
     	directoryName.add("E:\\Research Papers\\Image Processing");
@@ -89,9 +90,11 @@ public class PDFParser
                     String[] arrOfStr = text.trim().toLowerCase().split("digital object identifier");
                     if(arrOfStr.length==2) {
                     	arrOfStr = arrOfStr[1].toLowerCase().split(" ");
-                    	System.out.print("\n88888888"+file.getName()+"88888888\n");
-                    	System.out.print(arrOfStr[1]);
-                    	System.out.print("\n");
+//                    	System.out.print("\n88888888"+file.getName()+"88888888\n");
+//                    	System.out.print(arrOfStr[1]);
+                    	doi_dict.put(file.getName(), arrOfStr[1]);
+//                    	System.out.print("\n");
+
                     }
                     myWriter.write("\n-----------------------\n");
                     myWriter.write("");
@@ -104,7 +107,8 @@ public class PDFParser
 				e1.printStackTrace();
 			}
        });
-    	System.out.print("###########DOME###############");
+    	System.out.print("###########DONE###############");
+    	System.out.println("The set is: " + doi_dict.toString());
     }
         
 }
