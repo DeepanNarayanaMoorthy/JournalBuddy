@@ -36,7 +36,6 @@ public class PDFParser
     	listf(directoryName, filess);
 //    	filess.forEach(System.out::println);
 
-
     	for(int i = 0;i<=6;i++){
     		
     		System.out.print("######################################################################");
