@@ -12,6 +12,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.text.PDFTextStripper;
 import com.journalbuddy.invertedindexing.InvertedIndexingMain;
+import com.journalbuddy.invertedindexing.InvertedIndexParser;
 
 public class PDFParser
 {
@@ -41,6 +42,7 @@ public class PDFParser
 	
     public static void main(String[] args) throws IOException
     {
+
     	Hashtable<String, String> doi_dict = new Hashtable<String, String>();
     	List<String> directoryName= new ArrayList<String>();
     	directoryName.add("E:\\Research Papers\\Integrated Circuit");
@@ -120,6 +122,8 @@ public class PDFParser
     	System.out.println("The set is: " + doi_dict.toString());
     	
         InvertedIndexingMain.GenerateInvertedIndex("E:\\Research Papers\\New folder","E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\op.txt");
+		List<String> IndexLines=InvertedIndexParser.ReadIndexLines("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\a.txt");
+		IndexLines.forEach(System.out::println);
     }
 
         
