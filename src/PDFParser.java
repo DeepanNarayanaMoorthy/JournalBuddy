@@ -2,7 +2,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -53,7 +52,6 @@ public class PDFParser
     	});
 
     	filess.parallelStream().forEach((filessiter) -> {
-    		List<Integer> indexess=new ArrayList<Integer>();
     		File file = filessiter;
             try (PDDocument document = Loader.loadPDF(file);)
             {
@@ -65,7 +63,7 @@ public class PDFParser
 
                 PDFTextStripper stripper = new PDFTextStripper();
                 stripper.setSortByPosition(true);
-                final String filenamenow=new String("E:\\Research Papers\\New folder\\"+file.getName()+".bin");
+                final String filenamenow=new String("E:\\Research Papers\\New folder\\"+file.getName()+".txt");//+".bin");
 				try{
 					File myObj = new File(filenamenow);
 					if (myObj.createNewFile()) {
@@ -87,6 +85,11 @@ public class PDFParser
                     String text = stripper.getText(document);
                     String pageStr = String.format("page %d:", p);
                     myWriter.write(pageStr);
+                    myWriter.write("\n-----------------------\n");
+                    myWriter.write("");
+                    myWriter.write(text.trim());
+                    myWriter.write("");
+                    
                     String[] arrOfStr = text.trim().toLowerCase().split("digital object identifier");
                     if(arrOfStr.length==2) {
                     	arrOfStr = arrOfStr[1].toLowerCase().split(" ");
@@ -95,11 +98,17 @@ public class PDFParser
                     	doi_dict.put(file.getName(), arrOfStr[1]);
 //                    	System.out.print("\n");
 
+                    } else {
+                    	arrOfStr = text.trim().toLowerCase().split("DOI:");
+                    	if(arrOfStr.length==2) {
+                    		arrOfStr = arrOfStr[1].toLowerCase().split(" ");
+//                    		System.out.print("\n88888888"+file.getName()+"88888888\n");
+//                    		System.out.print(arrOfStr[1]);
+                    		doi_dict.put(file.getName(), arrOfStr[1]);
+//                    		System.out.print("\n");
+                    	}
+
                     }
-                    myWriter.write("\n-----------------------\n");
-                    myWriter.write("");
-                    myWriter.write(text.trim());
-                    myWriter.write("");
                 }
                 myWriter.close();
                 
