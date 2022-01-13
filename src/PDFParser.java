@@ -11,7 +11,7 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.text.PDFTextStripper;
-
+import com.journalbuddy.invertedindexing.InvertedIndexingMain;
 
 public class PDFParser
 {
@@ -118,7 +118,10 @@ public class PDFParser
        });
     	System.out.print("###########DONE###############");
     	System.out.println("The set is: " + doi_dict.toString());
+    	
+        InvertedIndexingMain.GenerateInvertedIndex("E:\\Research Papers\\New folder","E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\op.txt");
     }
+
         
 }
 
