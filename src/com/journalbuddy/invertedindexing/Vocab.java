@@ -1,3 +1,5 @@
+package com.journalbuddy.invertedindexing;
+
 import java.util.Map;
 
 public class Vocab {
