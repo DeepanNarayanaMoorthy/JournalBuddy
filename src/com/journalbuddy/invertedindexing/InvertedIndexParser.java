@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.concurrent.ConcurrentHashMap;   
 
 public class InvertedIndexParser {
@@ -15,7 +16,7 @@ public class InvertedIndexParser {
 	public static ConcurrentHashMap<String, String[]>  ReadIndexLines(String InvertedIndexFilePath) {
 		
 		BufferedReader IndexBufferReader = null;
-		ConcurrentHashMap <String, String[]> InvertedIndexMap = null;
+		ConcurrentHashMap <String, String[]> InvertedIndexMap= new ConcurrentHashMap<>();;
 		try {
 			IndexBufferReader = Files.newBufferedReader(Paths.get(InvertedIndexFilePath), StandardCharsets.ISO_8859_1);
  
@@ -23,11 +24,20 @@ public class InvertedIndexParser {
 			e.printStackTrace();
 		}
 		List<String> IIList = IndexBufferReader != null ? IndexBufferReader.lines().collect(Collectors.toList()) : null;
-		IIList.parallelStream().forEach((IIentries) -> {
-			String[] tempList=IIentries.split(":");
+//		IIList.parallelStream().forEach((IIentries) -> {
+//			String[] tempList=IIentries.split(":");
+//			String[] tempList2=tempList[1].split(";");
+//			InvertedIndexMap.put(tempList[0], tempList2);
+//		});
+		
+	    IntStream.range(0, IIList.size())
+        .boxed()
+        .parallel()
+        .forEach(i -> {
+			String[] tempList=IIList.get(i).split(":");
 			String[] tempList2=tempList[1].split(";");
 			InvertedIndexMap.put(tempList[0], tempList2);
-		});
+        });
 		return InvertedIndexMap;
  
 	}

@@ -43,9 +43,8 @@ public class PDFParser
 	
     public static void main(String[] args) throws IOException
     {
-//    	ConcurrentHashMap<String, String[]> IndexLines=InvertedIndexParser.ReadIndexLines("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\op.txt");
-//    	System.out.print(IndexLines.size());
-//		IndexLines.forEach(System.out::println);
+
+
     	Hashtable<String, String> doi_dict = new Hashtable<String, String>();
     	List<String> directoryName= new ArrayList<String>();
     	directoryName.add("E:\\Research Papers\\Integrated Circuit");
@@ -125,6 +124,9 @@ public class PDFParser
     	System.out.println("The set is: " + doi_dict.toString());
     	
         InvertedIndexingMain.GenerateInvertedIndex("E:\\Research Papers\\New folder","E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\op.txt");
+
+    	ConcurrentHashMap<String, String[]> IndexLines=InvertedIndexParser.ReadIndexLines("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\op.txt");
+    	System.out.print(IndexLines.size());
     }
 
         
