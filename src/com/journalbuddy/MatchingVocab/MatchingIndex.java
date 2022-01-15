@@ -1,29 +1,28 @@
 package com.journalbuddy.MatchingVocab;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
 
-public class BestMatchingConcurrentAdvancedMain {
+public class MatchingIndex {
 
-	public static void main(String[] args) {
+	public static ConcurrentHashMap<String, String> GetMatchingWordsFromII(String IIFile, String word) {
+		ConcurrentHashMap<String, String> MatchingWordsDict = new ConcurrentHashMap<>();
 		try {
 			Date startTime, endTime;
-			List<String> dictionary=WordsLoader.load("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\BestMatching\\data\\UK Advanced Cryptics Dictionary.txt");
+			ConcurrentHashMap<String, String> dictionary=WordsLoader.load(IIFile);
 			
 			System.out.println("Dictionary Size: "+dictionary.size());
 			
 			startTime=new Date();
 			
-			String word="stitter";
-			
-			if (args.length == 1) {
-				word=args[0];
-			}
-			
 			BestMatchingData result;
-			result = BestMatchingAdvancedConcurrentCalculation.getBestMatchingWords(word, dictionary);
+			List<String> dictionaryWords = Collections.list(dictionary.keys());
+
+			result = BestMatchingAdvancedConcurrentCalculation.getBestMatchingWords(word, dictionaryWords);
 			List<String> results=result.getWords();
 			endTime=new Date();
 			System.out.println("Word: "+word);
@@ -31,11 +30,16 @@ public class BestMatchingConcurrentAdvancedMain {
 			System.out.println("List of best matching words: "+results.size());
 			for (String wordOut: results) {
 				System.out.println(wordOut);
+				System.out.println(dictionary.get(wordOut));
+				MatchingWordsDict.put(wordOut, dictionary.get(wordOut));
 			}
 			System.out.println("Execution Time: "+(endTime.getTime()-startTime.getTime()));
+			
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
+		return MatchingWordsDict;
+
 
 	}
 
