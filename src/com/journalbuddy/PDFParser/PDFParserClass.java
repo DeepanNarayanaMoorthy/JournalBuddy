@@ -1,21 +1,19 @@
+package com.journalbuddy.PDFParser;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;   
-
 import org.apache.commons.io.FilenameUtils;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.text.PDFTextStripper;
-import com.journalbuddy.invertedindexing.InvertedIndexingMain;
-import com.journalbuddy.invertedindexing.InvertedIndexParser;
 
-public class PDFParser
+public class PDFParserClass
 {
     
 	public static String getNextWord(String str, String word) {
@@ -41,14 +39,10 @@ public class PDFParser
 	        }
 	}
 	
-    public static void main(String[] args) throws IOException
+    public static Hashtable<String, String> PDFtoTXTMain(List<String> directoryName, String OPFolder) throws IOException
     {
 
-
     	Hashtable<String, String> doi_dict = new Hashtable<String, String>();
-    	List<String> directoryName= new ArrayList<String>();
-    	directoryName.add("E:\\Research Papers\\Integrated Circuit");
-    	directoryName.add("E:\\Research Papers\\Image Processing");
     	List<File> filess = new ArrayList<File>();
     	
     	directoryName.parallelStream().forEach((directoryNameIter) -> {
@@ -67,7 +61,7 @@ public class PDFParser
 
                 PDFTextStripper stripper = new PDFTextStripper();
                 stripper.setSortByPosition(true);
-                final String filenamenow=new String("E:\\Research Papers\\New folder\\"+file.getName()+".txt");//+".bin");
+                final String filenamenow=new String(OPFolder+file.getName()+".txt");//+".bin");
 				try{
 					File myObj = new File(filenamenow);
 					if (myObj.createNewFile()) {
@@ -120,15 +114,10 @@ public class PDFParser
 				e1.printStackTrace();
 			}
        });
-    	System.out.print("###########DONE###############");
-    	System.out.println("The set is: " + doi_dict.toString());
-    	
-        InvertedIndexingMain.GenerateInvertedIndex("E:\\Research Papers\\New folder","E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\op.txt");
-
-    	ConcurrentHashMap<String, String[]> IndexLines=InvertedIndexParser.ReadIndexLines("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\op.txt");
-    	System.out.print(IndexLines.size());
+    		return doi_dict;
     }
 
         
 }
+
 
