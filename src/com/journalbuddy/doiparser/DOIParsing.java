@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import org.json.JSONException;
 import java.io.Reader;
 import java.net.URL;
@@ -35,7 +36,11 @@ public class DOIParsing {
 
   public static void main(String[] args) throws IOException, JSONException {
     JSONObject json = readJsonFromUrl("https://api.crossref.org/works/10.1109/TMI.2015.2476354");
+    JSONArray asd=(JSONArray) ((JSONObject) ((JSONObject) json.get("message")).get("published")).get("date-parts");
     System.out.println(json.toString());
+    System.out.println(((JSONArray) asd.get(0)).get(0));
+    System.out.println(((JSONArray) asd.get(0)).get(1));
+   
   }
 }
  
