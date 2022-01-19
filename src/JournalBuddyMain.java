@@ -26,7 +26,7 @@ public class JournalBuddyMain {
     	
         InvertedIndexingMain.GenerateInvertedIndex(TXTfilesLoc,InvertedIndexFile);
 
-    	ConcurrentHashMap<String, String[]> IndexLines=InvertedIndexParser.ReadIndexLines("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\op.txt");
+    	ConcurrentHashMap<String, String[]> IndexLines=InvertedIndexParser.ReadIndexLines(InvertedIndexFile);
     	System.out.print(IndexLines.size());
     	
     	ConcurrentHashMap<String, String> MatchWords =MatchingIndex.GetMatchingWordsFromII(InvertedIndexFile, "intr");
