@@ -77,11 +77,16 @@ public class JournalBuddyMain {
 		Statement insertstmt = conn.createStatement();
 
 		System.out.println("Connection created");
-		ResultSet rs = insertstmt.executeQuery("SELECT * "
+		ResultSet rs = insertstmt.executeQuery("SELECT *   "
 				+ "FROM journal, author, funder, subject, author_journal, funder_journal, subject_journal "
 				+ "WHERE author.pk_author_id = author_journal.fk_author_id "
 				+ "AND funder.pk_funder_id = funder_journal.fk_funder_id "
-				+ "AND subject.pk_subject_id = subject_journal.fk_subject_id");
+				+ "AND subject.pk_subject_id = subject_journal.fk_subject_id "
+				+ "AND journal.filename = author_journal.fk_journal_id "
+				+ "AND journal.filename = funder_journal.fk_journal_id "
+				+ "AND journal.filename = subject_journal.fk_journal_id ");
+		
+
 
 
 		CSVWriter writer = new CSVWriter(new FileWriter("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\yourfile.csv"));
