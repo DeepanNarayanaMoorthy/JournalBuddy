@@ -117,20 +117,24 @@ public class DOIParsing {
 		// TODO Auto-generated catch block
 		curdata.setVolume(-1);
 	}
-	  
-	  
+	 
+	  JSONArray jArray ;
     List<HashMap<String, String>> authorshash=new ArrayList<HashMap<String, String>>();
-    JSONArray jArray = (JSONArray)json.get("author"); 
-    if (jArray != null) { 
-       for (int i=0;i<jArray.length();i++){ 
-    	   HashMap<String, String> temphash=new HashMap<String, String>();
-    	   temphash.put("given", (String) ((JSONObject) jArray.get(i)).get("given"));
-    	   temphash.put("family", (String) ((JSONObject) jArray.get(i)).get("family"));
-    	   temphash.put("sequence", (String) ((JSONObject) jArray.get(i)).get("sequence"));
-    	   authorshash.add(temphash);
-       } 
+    if(json.has("author")) {
+    	jArray = (JSONArray)json.get("author"); 
+	    if (jArray != null) { 
+	       for (int i=0;i<jArray.length();i++){ 
+	    	   HashMap<String, String> temphash=new HashMap<String, String>();
+	    	   temphash.put("given", (String) ((JSONObject) jArray.get(i)).get("given"));
+	    	   temphash.put("family", (String) ((JSONObject) jArray.get(i)).get("family"));
+	    	   temphash.put("sequence", (String) ((JSONObject) jArray.get(i)).get("sequence"));
+	    	   authorshash.add(temphash);
+	       } 
+	    }
+	    curdata.setAuthors(authorshash);
+    } else {
+    	curdata.setAuthors(null);
     }
-    curdata.setAuthors(authorshash);
     
     String tempAward;
     if(json.has("funder")) {
@@ -141,7 +145,6 @@ public class DOIParsing {
 	    	   try {
 				tempAward=(String)((JSONArray) ((JSONObject) jArray.get(i)).get("award")).get(0);
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				tempAward="NOT_FOUND";
 			}
 	    	   fundershash.put((String) ((JSONObject) jArray.get(i)).get("name"), tempAward);       
@@ -155,13 +158,17 @@ public class DOIParsing {
 
     
     List<String> subjects=new ArrayList<String>();
-    jArray = (JSONArray)json.get("subject"); 
-    if (jArray != null) { 
-       for (int i=0;i<jArray.length();i++){ 
-    	   subjects.add((String)jArray.get(i));
-       } 
+    if(json.has("subject")) {
+	    jArray = (JSONArray)json.get("subject"); 
+	    if (jArray != null) { 
+	       for (int i=0;i<jArray.length();i++){ 
+	    	   subjects.add((String)jArray.get(i));
+	       } 
+	    }
+	    curdata.setSubjects(subjects);
+    } else {
+    	curdata.setSubjects(null);
     }
-    curdata.setSubjects(subjects);
     
     
 	return curdata;

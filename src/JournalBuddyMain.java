@@ -37,7 +37,7 @@ public class JournalBuddyMain {
     	List<String> keys = doi_dict.entrySet().stream()
     			  .map(Map.Entry::getKey)
     			  .sorted()
-    			  .limit(5)
+    			  .limit(doi_dict.size())
     			  .collect(Collectors.toList());
     	
     	int countt=0;
