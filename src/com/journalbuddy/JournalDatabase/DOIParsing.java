@@ -138,16 +138,19 @@ public class DOIParsing {
     
     String tempAward;
     if(json.has("funder")) {
-	    HashMap<String, String> fundershash=new HashMap<String, String>();
+    	List<HashMap<String, String>> fundershash=new ArrayList<HashMap<String, String>>();
 	    jArray = (JSONArray)json.get("funder"); 
 	    if (jArray != null) { 
-	       for (int i=0;i<jArray.length();i++){ 
+	       for (int i=0;i<jArray.length();i++){
+	    	   HashMap<String, String> tempfunderhash=new HashMap<String, String>();
 	    	   try {
 				tempAward=(String)((JSONArray) ((JSONObject) jArray.get(i)).get("award")).get(0);
 			} catch (JSONException e) {
 				tempAward="NOT_FOUND";
 			}
-	    	   fundershash.put((String) ((JSONObject) jArray.get(i)).get("name"), tempAward);       
+	    	   tempfunderhash.put("funder",(String) ((JSONObject) jArray.get(i)).get("name"));
+	    	   tempfunderhash.put("award",tempAward);
+	    	   fundershash.add(tempfunderhash);       
 	    	   } 
 	    }
 	    curdata.setFunders(fundershash);

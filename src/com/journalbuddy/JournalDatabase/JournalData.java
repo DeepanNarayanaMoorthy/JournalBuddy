@@ -19,17 +19,17 @@ public class JournalData {
 	private int issue_year;
 	private int reference_count;
 	private int is_referenced_by_count;
-	private HashMap<String, String> funders;
+	private List<HashMap<String, String>> funders;
 	private List<HashMap<String, String>> authors;
 	private List<String> subjects;
 	
 	public String getFilename() {
 		return filename;
 	}
-	public HashMap<String, String> getFunders() {
+	public List<HashMap<String, String>> getFunders() {
 		return funders;
 	}
-	public void setFunders(HashMap<String, String> funders) {
+	public void setFunders(List<HashMap<String, String>> funders) {
 		this.funders = funders;
 	}
 	public List<HashMap<String, String>> getAuthors() {
@@ -117,35 +117,35 @@ public class JournalData {
 		this.issue_year = issue_year;
 	}
 	public void PrintAll() {
-		System.out.print("\n");
+		System.out.print("getContainer_name\n");
 		System.out.print(getContainer_name());
-		System.out.print("\n");
+		System.out.print("getDoi\n");
 		System.out.print(getDoi());
-		System.out.print("\n");
+		System.out.print("getFilename\n");
 		System.out.print(getFilename());
-		System.out.print("\n");
+		System.out.print("getIs_referenced_by_count\n");
 		System.out.print(getIs_referenced_by_count());
-		System.out.print("\n");
+		System.out.print("getIssue\n");
 		System.out.print(getIssue());
-		System.out.print("\n");
+		System.out.print("getIssue_year\n");
 		System.out.print(getIssue_year());
-		System.out.print("\n");
+		System.out.print("getIssue_month\n");
 		System.out.print(getIssue_month());
-		System.out.print("\n");
+		System.out.print("getPub_year\n");
 		System.out.print(getPub_year());
-		System.out.print("\n");
+		System.out.print("getPub_month\n");
 		System.out.print(getPub_month());
-		System.out.print("\n");
+		System.out.print("getReference_count\n");
 		System.out.print(getReference_count());
-		System.out.print("\n");
+		System.out.print("getTitle\n");
 		System.out.print(getTitle());
-		System.out.print("\n");
+		System.out.print("getVolume\n");
 		System.out.print(getVolume());
-		System.out.print("\n");
+		System.out.print("getAuthors\n");
 		System.out.print(getAuthors());
-		System.out.print("\n");
+		System.out.print("getFunders\n");
 		System.out.print(getFunders());
-		System.out.print("\n");
+		System.out.print("getSubjects\n");
 		System.out.print(getSubjects());
 		System.out.print("\n");
 	}

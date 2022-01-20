@@ -1,6 +1,17 @@
 import com.journalbuddy.invertedindexing.InvertedIndexingMain;
+import com.opencsv.CSVWriter;
 import com.journalbuddy.MatchingVocab.MatchingIndex;
+
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -13,12 +24,14 @@ import com.journalbuddy.JournalDatabase.JournalData;
 import com.journalbuddy.JournalDatabase.DOIParsing;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import com.journalbuddy.JournalDatabase.InsertJournal;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 
 public class JournalBuddyMain {
 
-	public static void main(String[] args) throws IOException, InterruptedException, JSONException {
+	public static void main(String[] args) throws IOException, InterruptedException, JSONException, SQLException, ParseException {
 		
 		
     	String TXTfilesLoc="E:\\Research Papers\\New folder";
@@ -37,7 +50,7 @@ public class JournalBuddyMain {
     	List<String> keys = doi_dict.entrySet().stream()
     			  .map(Map.Entry::getKey)
     			  .sorted()
-    			  .limit(doi_dict.size())
+    			  .limit(5)
     			  .collect(Collectors.toList());
     	
     	int countt=0;
@@ -51,13 +64,42 @@ public class JournalBuddyMain {
     	    TimeUnit.SECONDS.sleep(1);
     	}
     	
-   
+		FileUtils.deleteDirectory(new File("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db"));
+		InsertJournal.CreateTables();
+		
         for (int i = 0; i < sampledata.size(); i++) {
-        	 
-            // Print all elements of List
-            sampledata.get(i).PrintAll();
+//        	sampledata.get(i).PrintAll();
+        	InsertJournal.InsertJournalFun(sampledata.get(i));
         }
     	
+		String URL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db";//create=true";
+		Connection conn = DriverManager.getConnection(URL);
+		Statement insertstmt = conn.createStatement();
+
+		System.out.println("Connection created");
+		ResultSet rs = insertstmt.executeQuery("SELECT * "
+				+ "FROM journal, author, funder, subject, author_journal, funder_journal, subject_journal "
+				+ "WHERE author.pk_author_id = author_journal.fk_author_id "
+				+ "AND funder.pk_funder_id = funder_journal.fk_funder_id "
+				+ "AND subject.pk_subject_id = subject_journal.fk_subject_id");
+
+
+		CSVWriter writer = new CSVWriter(new FileWriter("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\yourfile.csv"));
+		Boolean includeHeaders = true;
+		writer.writeAll(rs, includeHeaders);
+		writer.close();
+		
+//		ResultSetMetaData rsmd = rs.getMetaData();
+//		int columnsNumber = rsmd.getColumnCount();                     
+//		while (rs.next()) {
+//		for(int i = 1 ; i <= columnsNumber; i++){
+//		      System.out.print(rs.getString(i) + " ");
+//		}
+//		  System.out.println();//Move to the next line to print the next row.           
+//
+//		    }
+		
+		
 //        InvertedIndexingMain.GenerateInvertedIndex(TXTfilesLoc,InvertedIndexFile);
 //
 //    	ConcurrentHashMap<String, String[]> IndexLines=InvertedIndexParser.ReadIndexLines(InvertedIndexFile);

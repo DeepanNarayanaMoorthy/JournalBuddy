@@ -1,15 +1,23 @@
 package com.journalbuddy.JournalDatabase;
 
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.commons.io.FileUtils;
 
 import com.journalbuddy.JournalDatabase.JournalData;
 
@@ -34,7 +42,8 @@ public class InsertJournal {
 		
 		query = "CREATE TABLE funder "
 				+ "  ( "
-				+ "     fundername VARCHAR(255) PRIMARY KEY"
+				+ "     pk_funder_id INTEGER PRIMARY KEY GENERATED always AS IDENTITY(START WITH 1, INCREMENT BY 1), "
+				+ "     fundername   VARCHAR(255) "
 				+ "  ) ";
 		
 		stmt.execute(query);
@@ -42,7 +51,8 @@ public class InsertJournal {
 		
 		query = "CREATE TABLE subject "
 				+ "  ( "
-				+ "     subjectname VARCHAR(255) PRIMARY KEY "
+				+ "     pk_subject_id INTEGER PRIMARY KEY GENERATED always AS IDENTITY(START WITH 1, INCREMENT BY 1), "
+				+ "     subjectname   VARCHAR(255)  "
 				+ "  ) ";
 		stmt.execute(query);
 		System.out.println("Subject Table created");
@@ -79,10 +89,10 @@ public class InsertJournal {
 		
 		query = "CREATE TABLE funder_journal "
 				+ "  ( "
-				+ "     fk_funder_id  VARCHAR(255) NOT NULL, "
+				+ "     fk_funder_id  INTEGER NOT NULL, "
 				+ "     fk_journal_id VARCHAR(255) NOT NULL, "
 				+ "     award         VARCHAR(255), "
-				+ "     FOREIGN KEY (fk_funder_id) REFERENCES funder(fundername), "
+				+ "     FOREIGN KEY (fk_funder_id) REFERENCES funder(pk_funder_id), "
 				+ "     FOREIGN KEY (fk_journal_id) REFERENCES journal(filename), "
 				+ "     PRIMARY KEY (fk_funder_id, fk_journal_id) "
 				+ "  ) ";
@@ -91,9 +101,9 @@ public class InsertJournal {
 		
 		query = "CREATE TABLE subject_journal "
 				+ "  ( "
-				+ "     fk_subject_id VARCHAR(255) NOT NULL, "
+				+ "     fk_subject_id INTEGER NOT NULL, "
 				+ "     fk_journal_id VARCHAR(255) NOT NULL, "
-				+ "     FOREIGN KEY (fk_subject_id) REFERENCES subject(subjectname), "
+				+ "     FOREIGN KEY (fk_subject_id) REFERENCES subject(pk_subject_id), "
 				+ "     FOREIGN KEY (fk_journal_id) REFERENCES journal(filename), "
 				+ "     PRIMARY KEY (fk_subject_id, fk_journal_id) "
 				+ "  ) ";
@@ -152,12 +162,117 @@ public class InsertJournal {
 		sqlStartDate = new java.sql.Date(date.getTime());
 		insertstmt.setDate(4,  sqlStartDate);
 		insertstmt.execute();
+		System.out.println("Normal Printing Completed");
+		
+		if(journalclass.getAuthors()!=null) {
+			for(HashMap<String, String> authormap: journalclass.getAuthors()) {
+				insertstmt = conn.prepareStatement("INSERT INTO author(firstname, lastname) "
+						+ "VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+				insertstmt.setString(1, authormap.get("given"));
+				insertstmt.setString(2, authormap.get("family"));
+				insertstmt.execute();
+				System.out.println("second Printing Completed");
+				ResultSet rs = insertstmt.getGeneratedKeys();
+				rs.next();
+				int auto_id = rs.getInt(1);
+				insertstmt = conn.prepareStatement("INSERT INTO author_journal "
+						+ "VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+				insertstmt.setInt(1, auto_id);
+				insertstmt.setString(2, journalclass.getFilename());
+				insertstmt.setString(3, authormap.get("sequence"));
+				insertstmt.execute();
+				
+			}
+		}
+		
+		if(journalclass.getSubjects()!=null){
+			for(String subslistval: journalclass.getSubjects()) {
+				insertstmt = conn.prepareStatement("INSERT INTO subject(subjectname) "
+						+ "VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+				insertstmt.setString(1, subslistval);
+				insertstmt.execute();
+				System.out.println("subslistval Printing Completed");
+				ResultSet rs = insertstmt.getGeneratedKeys();
+				rs.next();
+				int auto_id = rs.getInt(1);
+				insertstmt = conn.prepareStatement("INSERT INTO subject_journal "
+						+ "VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+				insertstmt.setInt(1, auto_id);
+				insertstmt.setString(2, journalclass.getFilename());
+				insertstmt.execute();
+				
+			}
+		}
+		
+		if(journalclass.getFunders()!=null) {
+			for(HashMap<String, String> fundermap: journalclass.getFunders()) {
+				insertstmt = conn.prepareStatement("INSERT INTO funder(fundername) "
+						+ "VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+				insertstmt.setString(1, fundermap.get("funder"));
+				insertstmt.execute();
+				System.out.println("fundermap Printing Completed");
+				ResultSet rs = insertstmt.getGeneratedKeys();
+				rs.next();
+				int auto_id = rs.getInt(1);
+				insertstmt = conn.prepareStatement("INSERT INTO funder_journal "
+						+ "VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+				insertstmt.setInt(1, auto_id);
+				insertstmt.setString(2, journalclass.getFilename());
+				insertstmt.setString(3, fundermap.get("funder"));
+				insertstmt.execute();
+				
+			}
+		}
+
+
+		
 	}
-	public static void main(String[] args) throws Exception {
-//		CreateTables();
+	public static void mainSample(String[] args) throws Exception {
+		FileUtils.deleteDirectory(new File("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db"));
+
+		CreateTables();
+		List<String> dummysubs = new ArrayList<String>();
+		dummysubs.add("asd");
+		dummysubs.add("qwe");
+		dummysubs.add("wer");
+		
+		HashMap<String, String> dummyfunders1=new HashMap<String, String>();
+		dummyfunders1.put("funder", "qwe");
+		dummyfunders1.put("award", "fgh");
+		
+		HashMap<String, String> dummyfunders2=new HashMap<String, String>();
+		dummyfunders1.put("funder", "xcv");
+		dummyfunders1.put("award", "fgcvbh");
+		
+		HashMap<String, String> dummyfunders3=new HashMap<String, String>();
+		dummyfunders1.put("funder", "vbn");
+		dummyfunders1.put("award", "bnm");
+		
+		List<HashMap<String, String>> finaldummyfunders=new ArrayList<HashMap<String, String>>();
+		finaldummyfunders.add(dummyfunders3);
+		finaldummyfunders.add(dummyfunders2);
+		finaldummyfunders.add(dummyfunders1);
+		
+		HashMap<String, String> dummyhashauthor =new HashMap<String, String>();
+		HashMap<String, String> dummyhashauthor2 =new HashMap<String, String>();
+		List<HashMap<String, String>> dummyauthors=new ArrayList<HashMap<String, String>>();
+		dummyhashauthor.put("given", "asd");
+		dummyhashauthor.put("family", "qwe");
+		dummyhashauthor.put("sequence", "sdf");
+		dummyauthors.add(dummyhashauthor);
+		
+		dummyhashauthor2.put("given", "ert");
+		dummyhashauthor2.put("family", "rty");
+		dummyhashauthor2.put("sequence", "tyu");
+		dummyauthors.add(dummyhashauthor2);
+		
+		System.out.println(dummyauthors.toString()+ "\n");
+		System.out.println(finaldummyfunders.toString()+ "\n");
+		System.out.println(dummysubs.toString()+ "\n");
+		
 		JournalData journalclass=new JournalData();
 		journalclass.setDoi("asd");
-		journalclass.setFilename("asd");
+		journalclass.setFilename("ytuuyiu");
 		journalclass.setIs_referenced_by_count(23);
 		journalclass.setIssue(34);
 		journalclass.setIssue_month(6);
@@ -168,52 +283,36 @@ public class InsertJournal {
 		journalclass.setTitle("asd");
 		journalclass.setVolume(78);
 		journalclass.setContainer_name("asd");
+		journalclass.setAuthors(dummyauthors);
+		journalclass.setFunders(finaldummyfunders);
+		journalclass.setSubjects(dummysubs);
 		InsertJournalFun(journalclass);
 		
-//		String URL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db;create=true";
-//		Connection conn = DriverManager.getConnection(URL);
-//		Statement stmt = conn.createStatement();
-//		String query=new String();
-//		
-//		query="INSERT INTO Author ( name, country)"
-//				+ "VALUES ('Larry Bird', 'USA')";
-//		stmt.execute(query, Statement.RETURN_GENERATED_KEYS);
-//		ResultSet keys = stmt.getGeneratedKeys();
-//		keys.next();
-//		System.out.print(keys.getString(1));
 		
-//		query= "INSERT INTO Book (Title)"
-//				+ "VALUES ('Drive')";
-//		stmt.execute(query);
-//		System.out.println("Table Inserted");
+		String URL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db";//create=true";
+		Connection conn = DriverManager.getConnection(URL);
+		Statement insertstmt = conn.createStatement();
+
+		System.out.println("Connection created");
+		ResultSet rs = insertstmt.executeQuery("SELECT * "
+				+ "FROM journal, author, funder, subject, author_journal, funder_journal, subject_journal "
+				+ "WHERE author.pk_author_id = author_journal.fk_author_id "
+				+ "AND funder.pk_funder_id = funder_journal.fk_funder_id "
+				+ "AND subject.pk_subject_id = subject_journal.fk_subject_id");
+
 		
-//		query="INSERT INTO Author (Pk_author_id, name, country)"
-//				+ "VALUES (2, 'Magic Johnson', 'USA')";
-//		stmt.execute(query);
-//		System.out.println("Table Inserted");
-//		query= "INSERT INTO Book (Pk_journal_Id, Title)"
-//				+ "VALUES (1, 'When the game was ours')";
-//		stmt.execute(query);
-//		System.out.println("Table Inserted");
-//		
-//		
-//		query="INSERT INTO Author_Book(Fk_author_id, Fk_book_id) VALUES (1, 1)";
-//		stmt.execute(query);
-//		System.out.println("Table Inserted");
-//		query="INSERT INTO Author_Book(Fk_author_id, Fk_book_id) VALUES (2, 1)";
-//		stmt.execute(query);
-//		System.out.println("Table Inserted");
-//		query="INSERT INTO Author_Book(Fk_author_id, Fk_book_id) VALUES (1, 2)";
-//		stmt.execute(query);
-//		System.out.println("Table Inserted");
+	
+		ResultSetMetaData rsmd = rs.getMetaData();
+		int columnsNumber = rsmd.getColumnCount();                     
+		while (rs.next()) {
+		for(int i = 1 ; i <= columnsNumber; i++){
+		      System.out.print(rs.getString(i) + " ");
+		}
+		  System.out.println();//Move to the next line to print the next row.           
+
+		    }
 		
-//		query="SELECT Author.Name, Book.Title "
-//				+ "FROM Author, Book, Author_Book "
-//				+ "WHERE Author.Pk_author_id = Author_Book.Fk_author_id "
-//				+ "AND Book.Pk_journal_Id = Author_Book.Fk_book_id";
-//		stmt.execute(query);
-//		System.out.println("Table Table Fetched");
-//	
+
 //		ResultSet rs = stmt.executeQuery(query);
 //		ResultSetMetaData rsmd = rs.getMetaData();
 //		String name = rsmd.getColumnName(1);
