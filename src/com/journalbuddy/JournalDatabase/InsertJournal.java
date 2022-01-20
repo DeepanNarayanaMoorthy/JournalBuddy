@@ -1,10 +1,17 @@
 package com.journalbuddy.JournalDatabase;
+
+
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import com.journalbuddy.JournalDatabase.JournalData;
 
 
 public class InsertJournal {
@@ -45,7 +52,6 @@ public class InsertJournal {
 				+ "     filename               VARCHAR(255) PRIMARY KEY, "
 				+ "     doi                    VARCHAR(255), "
 				+ "     title                  VARCHAR(255), "
-				+ "     subtitle               VARCHAR(255), "
 				+ "     published_date         DATE, "
 				+ "     containername          VARCHAR(255), "
 				+ "     volume                 INT, "
@@ -95,8 +101,75 @@ public class InsertJournal {
 		stmt.execute(query);
 		System.out.println("funder_journal Table created");
 	}
+	
+	public static void InsertJournalFun(JournalData journalclass) throws SQLException, ParseException {
+		String URL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db;create=true";
+		Connection conn = DriverManager.getConnection(URL);
+		
+		PreparedStatement insertstmt = conn.prepareStatement("INSERT INTO journal "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		
+		insertstmt.setString(1, journalclass.getFilename());
+		insertstmt.setString(2, journalclass.getDoi());
+		insertstmt.setString(3, journalclass.getTitle());
+		
+		insertstmt.setString(5, journalclass.getContainer_name());
+		insertstmt.setInt(6, journalclass.getVolume());
+		insertstmt.setInt(7, journalclass.getIssue());
+		
+		insertstmt.setInt(9, journalclass.getReference_count());
+		insertstmt.setInt(10, journalclass.getIs_referenced_by_count());
+		
+		String TempDate;
+		
+		if(journalclass.getIssue_year()!=(-1)) {
+			if(journalclass.getIssue_month()!=(-1)) {
+				TempDate=Integer.toString(journalclass.getIssue_year())+"-"+String.format("%02d", journalclass.getIssue_month())+"-01";
+			} else {
+				TempDate=Integer.toString(journalclass.getIssue_year())+"-01-01";
+			}
+		} else {
+			TempDate=null;
+		}
+		
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-mm-dd"); // New Pattern
+		java.util.Date date = sdf1.parse(TempDate); // Returns a Date format object with the pattern
+		java.sql.Date sqlStartDate = new java.sql.Date(date.getTime());
+		insertstmt.setDate(8,  sqlStartDate);
+		
+		if(journalclass.getPub_year()!=(-1)) {
+			if(journalclass.getPub_month()!=(-1)) {
+				TempDate=Integer.toString(journalclass.getPub_year())+"-"+String.format("%02d", journalclass.getPub_month())+"-01";
+			} else {
+				TempDate=Integer.toString(journalclass.getPub_year())+"-01-01";
+			}
+		} else {
+			TempDate=null;
+		}
+		
+		sdf1 = new SimpleDateFormat("yyyy-mm-dd"); // New Pattern
+		date = sdf1.parse(TempDate); // Returns a Date format object with the pattern
+		sqlStartDate = new java.sql.Date(date.getTime());
+		insertstmt.setDate(4,  sqlStartDate);
+		insertstmt.execute();
+	}
 	public static void main(String[] args) throws Exception {
-		CreateTables();
+//		CreateTables();
+		JournalData journalclass=new JournalData();
+		journalclass.setDoi("asd");
+		journalclass.setFilename("asd");
+		journalclass.setIs_referenced_by_count(23);
+		journalclass.setIssue(34);
+		journalclass.setIssue_month(6);
+		journalclass.setIssue_year(2018);
+		journalclass.setPub_month(5);
+		journalclass.setPub_year(2016);
+		journalclass.setReference_count(67);
+		journalclass.setTitle("asd");
+		journalclass.setVolume(78);
+		journalclass.setContainer_name("asd");
+		InsertJournalFun(journalclass);
+		
 //		String URL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db;create=true";
 //		Connection conn = DriverManager.getConnection(URL);
 //		Statement stmt = conn.createStatement();
