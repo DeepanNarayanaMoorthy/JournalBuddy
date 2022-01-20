@@ -93,7 +93,7 @@ public class PDFParserClass
                     	arrOfStr = arrOfStr[1].toLowerCase().split(" ");
 //                    	System.out.print("\n88888888"+file.getName()+"88888888\n");
 //                    	System.out.print(arrOfStr[1]);
-                    	doi_dict.put(file.getName(), arrOfStr[1]);
+                    	doi_dict.put(file.getName(), arrOfStr[1].split("\n")[0]);
 //                    	System.out.print("\n");
 
                     } else {
@@ -102,7 +102,7 @@ public class PDFParserClass
                     		arrOfStr = arrOfStr[1].toLowerCase().split(" ");
 //                    		System.out.print("\n88888888"+file.getName()+"88888888\n");
 //                    		System.out.print(arrOfStr[1]);
-                    		doi_dict.put(file.getName(), arrOfStr[1]);
+                    		doi_dict.put(file.getName(), arrOfStr[1].split("\n")[0]);
 //                    		System.out.print("\n");
                     	}
 
