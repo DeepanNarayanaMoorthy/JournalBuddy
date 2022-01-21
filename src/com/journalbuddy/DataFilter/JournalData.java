@@ -1,4 +1,4 @@
-package com.journalbuddy.JournalDatabase;
+package com.journalbuddy.DataFilter;
 
 import java.sql.Date;
 import java.util.ArrayList;

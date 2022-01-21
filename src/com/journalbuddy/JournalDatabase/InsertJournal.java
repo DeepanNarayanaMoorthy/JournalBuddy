@@ -2,6 +2,8 @@ package com.journalbuddy.JournalDatabase;
 
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -20,9 +22,30 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 
 import com.journalbuddy.JournalDatabase.JournalData;
+import com.opencsv.CSVWriter;
 
 
 public class InsertJournal {
+	
+	public static void ExportToCSV(String databaseURL, String CSVPath) throws SQLException, IOException {
+		Connection conn = DriverManager.getConnection(databaseURL);
+		Statement insertstmt = conn.createStatement();
+
+		System.out.println("Connection created");
+		ResultSet rs = insertstmt.executeQuery("SELECT *   "
+				+ "FROM journal, author, funder, subject, author_journal, funder_journal, subject_journal "
+				+ "WHERE author.pk_author_id = author_journal.fk_author_id "
+				+ "AND funder.pk_funder_id = funder_journal.fk_funder_id "
+				+ "AND subject.pk_subject_id = subject_journal.fk_subject_id "
+				+ "AND journal.filename = author_journal.fk_journal_id "
+				+ "AND journal.filename = funder_journal.fk_journal_id "
+				+ "AND journal.filename = subject_journal.fk_journal_id ");
+		
+		CSVWriter writer = new CSVWriter(new FileWriter(CSVPath));
+		Boolean includeHeaders = true;
+		writer.writeAll(rs, includeHeaders);
+		writer.close();
+	}
 	
 	public static void CreateTables() throws SQLException {
 		String URL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db;create=true";
@@ -218,7 +241,7 @@ public class InsertJournal {
 						+ "VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 				insertstmt.setInt(1, auto_id);
 				insertstmt.setString(2, journalclass.getFilename());
-				insertstmt.setString(3, fundermap.get("funder"));
+				insertstmt.setString(3, fundermap.get("award5"));
 				insertstmt.execute();
 				
 			}
@@ -227,7 +250,7 @@ public class InsertJournal {
 
 		
 	}
-	public static void mainSample(String[] args) throws Exception {
+	public static void dummyInserter(String[] args) throws Exception {
 		FileUtils.deleteDirectory(new File("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db"));
 
 		CreateTables();
@@ -294,36 +317,37 @@ public class InsertJournal {
 		Statement insertstmt = conn.createStatement();
 
 		System.out.println("Connection created");
-		ResultSet rs = insertstmt.executeQuery("SELECT * "
-				+ "FROM journal, author, funder, subject, author_journal, funder_journal, subject_journal "
-				+ "WHERE author.pk_author_id = author_journal.fk_author_id "
-				+ "AND funder.pk_funder_id = funder_journal.fk_funder_id "
-				+ "AND subject.pk_subject_id = subject_journal.fk_subject_id");
-
-		
-	
-		ResultSetMetaData rsmd = rs.getMetaData();
-		int columnsNumber = rsmd.getColumnCount();                     
-		while (rs.next()) {
-		for(int i = 1 ; i <= columnsNumber; i++){
-		      System.out.print(rs.getString(i) + " ");
-		}
-		  System.out.println();//Move to the next line to print the next row.           
-
-		    }
-		
-
-//		ResultSet rs = stmt.executeQuery(query);
-//		ResultSetMetaData rsmd = rs.getMetaData();
-//		String name = rsmd.getColumnName(1);
-//		System.out.println(name);
-//		name = rsmd.getColumnName(2);
-//		System.out.println(name);
+//		ResultSet rs = insertstmt.executeQuery("SELECT * "
+//				+ "FROM journal, author, funder, subject, author_journal, funder_journal, subject_journal "
+//				+ "WHERE author.pk_author_id = author_journal.fk_author_id "
+//				+ "AND funder.pk_funder_id = funder_journal.fk_funder_id "
+//				+ "AND subject.pk_subject_id = subject_journal.fk_subject_id");
+//
 //		
-//		while(rs.next()) {
-//			System.out.println("NAME: "+rs.getString("NAME"));
-//			System.out.println("TITLE: "+rs.getString("TITLE"));
-//			System.out.println(" ");
+//	
+//		ResultSetMetaData rsmd = rs.getMetaData();
+//		int columnsNumber = rsmd.getColumnCount();                     
+//		while (rs.next()) {
+//		for(int i = 1 ; i <= columnsNumber; i++){
+//		      System.out.print(rs.getString(i) + " ");
+//		}
+//		  System.out.println();//Move to the next line to print the next row.           
+//
+//		    }
+		
+//		stmt.execute(query, Statement.RETURN_GENERATED_KEYS);
+//		ResultSet keys = stmt.getGeneratedKeys();
+//		keys.next();
+//		System.out.print(keys.getString(1));
+//		ResultSetMetaData rsmd = keys.getMetaData();
+//		int columnsNumber = rsmd.getColumnCount();
+//		while (keys.next()) {
+//		    for (int i = 1; i <= columnsNumber; i++) {
+//		        if (i > 1) System.out.print(",  ");
+//		        String columnValue = keys.getString(i);
+//		        System.out.print(columnValue + " " + rsmd.getColumnName(i));
+//		    }
+//		    System.out.println("");
 //		}
 		
 	}

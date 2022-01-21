@@ -42,12 +42,19 @@ public class DOIParsing {
   public static JournalData getJournalData(String filename, String doi) throws JSONException, IOException {
 	  System.out.print(doi);
 	  JSONObject json;
-	  json= readJsonFromUrl("https://api.crossref.org/works/"+doi);
+	  String DOI2;
+	  try {
+		  DOI2=doi.substring(0, doi.length() - 1);
+		  json= readJsonFromUrl("https://api.crossref.org/works/"+DOI2);
+		  doi=DOI2;
+	} catch (Exception e2) {
+		json= readJsonFromUrl("https://api.crossref.org/works/"+doi);
+	}
 	  json=(JSONObject) json.get("message");
 	  JournalData curdata=new JournalData();
 
 	  curdata.setFilename(filename);
-	  curdata.setDoi(doi);
+	  curdata.setDoi(doi.replace(System.getProperty("line.separator"),""));
 	  try {
 		curdata.setContainer_name((String) ((JSONArray) json.get("container-title")).get(0));
 		System.out.print("setContainer_name");
