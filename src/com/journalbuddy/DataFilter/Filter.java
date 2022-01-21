@@ -1,53 +1,16 @@
 package com.journalbuddy.DataFilter;
 
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
-
-import com.journalbuddy.DataFilter.JournalDataLoader;
+import com.journalbuddy.JournalDatabase.JournalData;
+import com.journalbuddy.MatchingVocab.LevenshteinDistance;
 public class Filter {
-
-	public static float calculate (String string1, String string2) {
-		if(string1==null) {
-			string1="";
-		}
-		if(string2==null) {
-			string2="";
-		}
-		int[][] distances=new int[string1.length()+1][string2.length()+1];
-		
-		for (int i=1; i<=string1.length();i++) {
-			distances[i][0]=i;
-		}
-		
-		for (int j=1; j<=string2.length(); j++) {
-			distances[0][j]=j;
-		}
-		
-		for(int i=1; i<=string1.length(); i++) {
-			for (int j=1; j<=string2.length(); j++) {
-				if (string1.charAt(i-1)==string2.charAt(j-1)) {
-					distances[i][j]=distances[i-1][j-1];
-				} else {
-					distances[i][j]=minimum(distances[i-1][j],distances[i][j-1],distances[i-1][j-1])+1;
-				}
-			}
-		}
-		
-		return distances[string1.length()][string2.length()];
-	}
-
-	private static int minimum(int i, int j, int k) {
-		return Math.min(i,Math.min(j, k));
-	}
 	
 	public static boolean calculateResult(String a, String b, float factor) {
-		float valuee=calculate(a, b);
-		if(a==null) {
-			a="";
-		}
-		if(b==null) {
-			b="";
-		}
+		float valuee=LevenshteinDistance.calculate(a, b);
+		if(a==null) a="";
+		if(b==null) b="";
 		float tocompare=factor;
 		System.out.println(a+" "+b+" "+" "+Float.toString(valuee)+" "+Float.toString(tocompare) );
 		if(valuee<=tocompare){
@@ -237,4 +200,55 @@ public class Filter {
 		return false;
 	}
 
+	public static HashMap<String, Integer> GenerateFilterCriteria() {
+//		asd=		{"File_Name":{"criterias":["equals"], "need_inp":"yes"},
+//				"DOI":{"criterias":["equals"], "need_inp":"yes"},
+//				"Title":{"criterias":["equals"], "need_inp":"yes"},
+//				"Container_Name":{"criterias":["equals"], "need_inp":"yes"},
+//				"Author_FirstName":{"criterias":["equals"], "need_inp":"yes"},
+//				"Author_LastName":{"criterias":["equals"], "need_inp":"yes"},
+//				"Single_Subject":{"criterias":["equals"], "need_inp":"yes"},
+//				"Single_Funder":{"criterias":["equals"], "need_inp":"yes"},
+//				"Single_Award":{"criterias":["equals"], "need_inp":"yes"},
+//				"Author_Sequence":{"criterias":["equals"], "need_inp":"yes"},
+//
+//				"Volume":{"criterias":["equals", "greater than", "lesser than"], "need_inp":"yes"},
+//				"Issue":{"criterias":["equals", "greater than", "lesser than"], "need_inp":"yes"},
+//				"Is_Referenced_By_Count":{"criterias":["equals", "greater than", "lesser than"], "need_inp":"yes"},
+//				"Reference_count":{"criterias":["equals", "greater than", "lesser than"], "need_inp":"yes"},
+//
+//				"Published_Date":{"criterias":["equals", "greater than", "lesser than"], "need_inp":"yes"},
+//				"Issued_Date":{"criterias":["equals", "greater than", "lesser than"], "need_inp":"yes"},
+//				}
+		HashMap<String, Integer> filtercriterias= new HashMap<String, Integer>();
+		filtercriterias.put("File_Name##equals", 0);
+		filtercriterias.put("DOI##equals", 1);
+		filtercriterias.put("Title##equals", 2);
+		filtercriterias.put("Container_Name##equals", 3);
+		filtercriterias.put("Author_FirstName##equals", 4);
+		filtercriterias.put("Author_LastName##equals", 5);
+		filtercriterias.put("Single_Subject##equals", 6);
+		filtercriterias.put("Single_Funder##equals", 7);
+		filtercriterias.put("Single_Award##equals", 8);
+		filtercriterias.put("Author_Sequence##equals", 9);
+		filtercriterias.put("Volume##equals", 10);
+		filtercriterias.put("Volume##greater_than", 10);
+		filtercriterias.put("Volume##lesser_than", 10);
+		filtercriterias.put("Issue##equals", 11);
+		filtercriterias.put("Issue##greater_than", 11);
+		filtercriterias.put("Issue##lesser_than", 11);
+		filtercriterias.put("Is_Referenced_By_Count##equals", 12);
+		filtercriterias.put("Is_Referenced_By_Count##greater_than", 12);
+		filtercriterias.put("Is_Referenced_By_Count##lesser_than", 12);
+		filtercriterias.put("Reference_count##equals", 13);
+		filtercriterias.put("Reference_count##greater_than", 13);
+		filtercriterias.put("Reference_count##lesser_than", 13);
+		filtercriterias.put("Published_Date##equals", 14);
+		filtercriterias.put("Published_Date##greater_than", 14);
+		filtercriterias.put("Published_Date##lesser_than", 14);
+		filtercriterias.put("Issued_Date##equals", 15);
+		filtercriterias.put("Issued_Date##greater_than", 15);
+		filtercriterias.put("Issued_Date##lesser_than", 15);
+		return filtercriterias;
+	}
 }

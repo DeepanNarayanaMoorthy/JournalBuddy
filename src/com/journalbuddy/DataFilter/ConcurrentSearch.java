@@ -3,8 +3,7 @@ package com.journalbuddy.DataFilter;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
-import com.journalbuddy.DataFilter.FilterData;
-import com.journalbuddy.DataFilter.JournalData;
+import com.journalbuddy.JournalDatabase.JournalData;
 
 public class ConcurrentSearch {
 

@@ -7,7 +7,7 @@ import java.util.concurrent.RecursiveTask;
 
 import com.journalbuddy.DataFilter.Filter;
 import com.journalbuddy.DataFilter.FilterData;
-import com.journalbuddy.DataFilter.JournalData;
+import com.journalbuddy.JournalDatabase.JournalData;
 
 public class IndividualTask extends RecursiveTask<JournalData> {
 

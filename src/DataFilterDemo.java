@@ -8,14 +8,14 @@ import java.util.List;
 
 import com.journalbuddy.DataFilter.ConcurrentSearch;
 import com.journalbuddy.DataFilter.FilterData;
-import com.journalbuddy.DataFilter.JournalData;
+import com.journalbuddy.JournalDatabase.JournalData;
 import com.journalbuddy.DataFilter.JournalDataLoader;
-import com.journalbuddy.DataFilter.JournalFilterMain;
+import com.journalbuddy.DataFilter.Filter;
 public class DataFilterDemo {
 
 	public static void main(String[] args) throws IOException {
 		Path path = Paths.get("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\yourfile.csv");
-		HashMap<String, Integer> filtercriterias=JournalFilterMain.GenerateFilterCriteria();
+		HashMap<String, Integer> filtercriterias=Filter.GenerateFilterCriteria();
 		JournalData data[] = JournalDataLoader.load(path);
 		System.out.println("Number of items: " + data.length);
 
