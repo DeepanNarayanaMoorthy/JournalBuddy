@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 
-public class BestMatchingAdvancedConcurrentCalculation {
+public class BestMatchingCalc {
 
 	public static BestMatchingData getBestMatchingWords(String word, List<String> dictionary) throws InterruptedException, ExecutionException {
 
@@ -20,7 +20,7 @@ public class BestMatchingAdvancedConcurrentCalculation {
 		int step = size / numCores;
 		int startIndex, endIndex;
 		List<Future<BestMatchingData>> results;
-		List<BestMatchingBasicTask> tasks = new ArrayList<>();
+		List<BestMatchingTask> tasks = new ArrayList<>();
 
 		for (int i = 0; i < numCores; i++) {
 			startIndex = i * step;
@@ -29,7 +29,7 @@ public class BestMatchingAdvancedConcurrentCalculation {
 			} else {
 				endIndex = (i + 1) * step;
 			}
-			BestMatchingBasicTask task = new BestMatchingBasicTask(startIndex, endIndex, dictionary, word);
+			BestMatchingTask task = new BestMatchingTask(startIndex, endIndex, dictionary, word);
 			tasks.add(task);
 		}
 

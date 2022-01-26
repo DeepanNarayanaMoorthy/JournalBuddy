@@ -1,4 +1,6 @@
 import com.journalbuddy.invertedindexing.InvertedIndexingMain;
+import com.journalbuddy.MatchingVocab.BestMatchingCalc;
+import com.journalbuddy.MatchingVocab.BestMatchingData;
 import com.journalbuddy.MatchingVocab.MatchingIndex;
 
 import java.io.IOException;
@@ -38,6 +40,11 @@ public class InvertedMatchingDemo {
     	ConcurrentHashMap<String, String> MatchWords =MatchingIndex.GetMatchingWordsFromII(InvertedIndexFile, InvertedSearchWord);
     	System.out.println("Count of Matched Words: "+Integer.toString(MatchWords.size()));
     	System.out.println("The set is: " + MatchWords.toString());
+    	
+//    	FOR JUST WORDS LIST
+//    	BestMatchingData result;
+//		result = BestMatchingCalc.getBestMatchingWords(word, dictionaryWords);
+//		List<String> results=result.getWords();
     	
 	}
 

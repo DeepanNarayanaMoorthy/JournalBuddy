@@ -6,7 +6,7 @@ import java.util.concurrent.Callable;
 
 
 
-public class BestMatchingBasicTask implements Callable<BestMatchingData> {
+public class BestMatchingTask implements Callable<BestMatchingData> {
 	
 	private int startIndex;
 	
@@ -16,7 +16,7 @@ public class BestMatchingBasicTask implements Callable<BestMatchingData> {
 	
 	private String word;
 	
-	public BestMatchingBasicTask(int startIndex, int endIndex, List<String> dictionary, String word) {
+	public BestMatchingTask(int startIndex, int endIndex, List<String> dictionary, String word) {
 		this.startIndex=startIndex;
 		this.endIndex=endIndex;
 		this.dictionary=dictionary;

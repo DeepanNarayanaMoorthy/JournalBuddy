@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutionException;
 
 
 public class MatchingIndex {
-
+	
 	public static ConcurrentHashMap<String, String> GetMatchingWordsFromII(String IIFile, String word) {
 		ConcurrentHashMap<String, String> MatchingWordsDict = new ConcurrentHashMap<>();
 		try {
@@ -22,7 +22,7 @@ public class MatchingIndex {
 			BestMatchingData result;
 			List<String> dictionaryWords = Collections.list(dictionary.keys());
 
-			result = BestMatchingAdvancedConcurrentCalculation.getBestMatchingWords(word, dictionaryWords);
+			result = BestMatchingCalc.getBestMatchingWords(word, dictionaryWords);
 			List<String> results=result.getWords();
 			endTime=new Date();
 			System.out.println("Word: "+word);
