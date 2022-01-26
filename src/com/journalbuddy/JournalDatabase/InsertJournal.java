@@ -41,8 +41,8 @@ public class InsertJournal {
 		writer.close();
 	}
 	
-	public static void CreateTables() throws SQLException {
-		String URL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db;create=true";
+	public static void CreateTables(String URL) throws SQLException {
+//		String URL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db;create=true";
 		Connection conn = DriverManager.getConnection(URL);
 		Statement stmt = conn.createStatement();
 		String query=new String();
@@ -129,8 +129,8 @@ public class InsertJournal {
 		System.out.println("funder_journal Table created");
 	}
 	
-	public static void InsertJournalFun(JournalData journalclass) throws SQLException, ParseException {
-		String URL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db;create=true";
+	public static void InsertJournalFun(String URL, JournalData journalclass) throws SQLException, ParseException {
+//		String URL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db;create=true";
 		Connection conn = DriverManager.getConnection(URL);
 		
 		PreparedStatement insertstmt = conn.prepareStatement("INSERT INTO journal "
@@ -246,8 +246,8 @@ public class InsertJournal {
 	}
 	public static void dummyInserter(String[] args) throws Exception {
 		FileUtils.deleteDirectory(new File("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db"));
-
-		CreateTables();
+		String DatabaseURL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db;create=true";
+		CreateTables(DatabaseURL);
 		List<String> dummysubs = new ArrayList<String>();
 		dummysubs.add("asd");
 		dummysubs.add("qwe");
@@ -303,7 +303,7 @@ public class InsertJournal {
 		journalclass.setAuthors(dummyauthors);
 		journalclass.setFunders(finaldummyfunders);
 		journalclass.setSubjects(dummysubs);
-		InsertJournalFun(journalclass);
+		InsertJournalFun(DatabaseURL, journalclass);
 		
 		
 		String URL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db";//create=true";

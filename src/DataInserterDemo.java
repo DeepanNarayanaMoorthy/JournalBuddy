@@ -20,8 +20,9 @@ public class DataInserterDemo {
 
 	public static void main(String[] args) throws IOException, InterruptedException, JSONException, SQLException, ParseException {
 		
+		String DatabaseURL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db;create=true";
 		FileUtils.deleteDirectory(new File("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db"));
-		InsertJournal.CreateTables();
+		InsertJournal.CreateTables(DatabaseURL);
 		
 		
     	String TXTfilesLoc="E:\\Research Papers\\New folder";
@@ -58,7 +59,7 @@ public class DataInserterDemo {
     	
 
         for (int i = 0; i < sampledata.size(); i++) {
-        	InsertJournal.InsertJournalFun(sampledata.get(i));
+        	InsertJournal.InsertJournalFun(DatabaseURL, sampledata.get(i));
         }
     	
         InsertJournal.ExportToCSV(databaseURL, CSVPath);;
