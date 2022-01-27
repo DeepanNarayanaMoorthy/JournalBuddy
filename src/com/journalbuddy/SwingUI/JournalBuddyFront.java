@@ -11,6 +11,11 @@ import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import com.journalbuddy.DataFilter.ConcurrentSearch;
+import com.journalbuddy.DataFilter.Filter;
+import com.journalbuddy.DataFilter.FilterData;
+import com.journalbuddy.DataFilter.JournalDataLoader;
+import com.journalbuddy.JournalDatabase.JournalData;
 import com.journalbuddy.MatchingVocab.MatchingIndex;
 import com.journalbuddy.PDFParser.PDFParserClass;
 import com.journalbuddy.invertedindexing.InvertedIndexParser;
@@ -26,6 +31,7 @@ import javax.swing.JTable;
 //import com.jgoodies.forms.layout.RowSpec;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -33,7 +39,10 @@ import javax.swing.JFileChooser;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
@@ -45,15 +54,21 @@ import javax.swing.JTree;
 
 public class JournalBuddyFront extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9100063317687695082L;
 	private JPanel contentPane;
 	private JTable dirtable;
 	private JTable doitable;
 	private String TXTfilesLoc="E:\\Research Papers\\New folder";
 	private String InvertedIndexFile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\op.txt";
+	Path CSVpath = Paths.get("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\yourfile.csv");
 	private JTextField wordfield;
 	private JTable filterstable;
 	
 	List<TableCellEditor> editors = new ArrayList<TableCellEditor>(3);
+	private JTable finalfiltertable;
 	/**
 	 * Launch the application.
 	 */
@@ -257,59 +272,140 @@ public class JournalBuddyFront extends JFrame {
 		scrollPane_2.setBounds(10, 11, 1332, 594);
 		inputfilters.add(scrollPane_2);
 		
-		
-        String[] attrs = { "", "File_Name", "DOI", "Title", "Container_Name", "Author_FirstName",
-        		"Author_LastName", "Single_Subject", "Single_Funder", "Single_Award", "Author_Sequence",
+//		   comboBoxTraceModeSelection = new JComboBox<TraceMode>();
+//		   comboBoxTraceModeSelection.setModel(new DefaultComboBoxModel<TraceMode>
+//		(TraceMode.values()));
+		   
+        String[] attrs = { "File_Name", "DOI", "Title", "Container_Name", "Author_FirstName",
+        		"Author_LastName", "Author_Sequence", "Single_Subject", "Single_Funder", "Single_Award",
         		"Volume", "Issue", "Is_Referenced_By_Count", "Reference_count", "Published_Date", "Issued_Date"};
-        JComboBox<String> comboBox1 = new JComboBox<String>( attrs );
+        JComboBox<String> comboBox1 = new JComboBox<String>();
+        comboBox1.setModel(new DefaultComboBoxModel<String>(attrs));
         DefaultCellEditor dce1 = new DefaultCellEditor( comboBox1 );
         editors.add( dce1 );
 
-        String[] items2 = { "", "equals", "greater_than", "lesser_than" };
-        JComboBox<String> comboBox2 = new JComboBox<String>( items2 );
+        String[] items2 = { "equals", "greater_than", "lesser_than" };
+        JComboBox<String> comboBox2 = new JComboBox<String>();
+        comboBox2.setModel(new DefaultComboBoxModel<String>(items2));
         DefaultCellEditor dce2 = new DefaultCellEditor( comboBox2 );
         editors.add( dce2 );
+        //FOR DEMO
+        Object[][] data = {
+        		{"Author_FirstName", "equals", "Alessandr", "2"}, 
+        		{"Single_Subject", "equals", "Electrical and Electronic Engineeri", "3"}
+        };
+      //FOR DEMO
+        Object[] ColumnNamess= {"Attribute", "Filter Parameter", "Value", "Max. Word Difference"};
         
-		DefaultTableModel filterstablemodel = new DefaultTableModel();
-		filterstablemodel.addColumn("Attribute");
-		filterstablemodel.addColumn("Value");
-		filterstablemodel.addColumn("Filter Parameter");
-		filterstablemodel.addColumn("Max. Word Difference");
+		DefaultTableModel filterstablemodel = new DefaultTableModel(data, ColumnNamess);
+
 		
 		filterstable = new JTable(filterstablemodel) {
-            public TableCellEditor getCellEditor(int row, int column)
-            {
-                int modelColumn = convertColumnIndexToModel( column );
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 100661786991169710L;
 
+			public TableCellEditor getCellEditor(int row, int column)
+            {
                 if (column==0)
                     return editors.get(0);
-                else if (column==2)
+                else if (column==1)
                     return editors.get(1);
                 else
                     return super.getCellEditor(row, column);
             }
         };
 		scrollPane_2.setViewportView(filterstable);
-		
+		filterstable.setRowHeight(20);
 		JButton filteraddrow = new JButton("Add a Row");
 		filteraddrow.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		filteraddrow.setBounds(264, 616, 199, 60);
 		filteraddrow.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				filterstablemodel.addRow(new Object[] {"", "", "", ""});
+				filterstablemodel.addRow(new Object[] {null, null, null, null});
 			}
 			
 		});
 		inputfilters.add(filteraddrow);
 		
+		JPanel filteroutput = new JPanel();
+		datafilterr.addTab("View Filter Output", null, filteroutput, null);
+		filteroutput.setLayout(null);
+		
+		
+		DefaultTableModel finaltablemodel = new DefaultTableModel(null, attrs);
+		
+		JScrollPane scrollPane_3 = new JScrollPane();
+		scrollPane_3.setBounds(10, 11, 1332, 683);
+		filteroutput.add(scrollPane_3);
+		finalfiltertable = new JTable(finaltablemodel);
+		scrollPane_3.setViewportView(finalfiltertable);
+		add_dir.setLayout(null);
+//		
+//        String[] attrs = { "File_Name", "DOI", "Title", "Container_Name", "Author_FirstName",
+//        		"Author_LastName", "Author_Sequence", "Single_Subject", "Single_Funder", "Single_Award",
+//        		"Volume", "Issue", "Is_Referenced_By_Count", "Reference_count", "Published_Date", "Issued_Date"};
+		
 		JButton btnApplyFilters = new JButton("Apply Filters");
 		btnApplyFilters.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		btnApplyFilters.setBounds(892, 616, 199, 60);
+		btnApplyFilters.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JournalData data[] = null;
+				try {
+					data = JournalDataLoader.load(CSVpath);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				int SIZE=data.length;
+				HashMap<String, Integer> filtercriterias=Filter.GenerateFilterCriteria();
+				List<FilterData> filters = new ArrayList<FilterData>();
+				FilterData filter = new FilterData();
+				filters = new ArrayList<FilterData>();
+				
+				for(int i = 0;i<filterstable.getRowCount();i++) {
+					try {
+						filter = new FilterData();
+						filter.setIdField(filtercriterias.get(filterstable.getValueAt(i, 0)+"##"+filterstable.getValueAt(i, 1)));
+						filter.setLeven_dis(Integer.parseInt(filterstable.getValueAt(i, 3).toString()));
+						filter.setValue((String) filterstable.getValueAt(i, 2).toString());
+						filters.add(filter);
+					} catch (Exception e1) {
+						//INVALID FILTER PARAMETER
+						e1.printStackTrace();
+					}				
+				}
+				List<JournalData> results = ConcurrentSearch.findAll(data, filters, SIZE);
+				for(JournalData resultiter: results) {
+//					System.out.println(resultiter.getTitle());
+//					System.out.println(resultiter.getAuthor_firstname());
+					finalfiltertable.repaint();
+					finaltablemodel.addRow(new Object[] {
+							resultiter.getFilename(),
+							resultiter.getDoi(),
+							resultiter.getTitle(),
+							resultiter.getContainer_name(),
+							resultiter.getAuthor_firstname(),
+							resultiter.getAuthor_lastname(),
+							resultiter.getAuth_seq(),
+							resultiter.getSingle_subject(),
+							resultiter.getSingle_funder(),
+							resultiter.getSingle_award(),
+							resultiter.getVolume(),
+							resultiter.getIssue(),
+							resultiter.getIs_referenced_by_count(),
+							resultiter.getReference_count(),
+							resultiter.getPub_date(),
+							resultiter.getIssue_date()
+					});
+					
+				}
+				datafilterr.setSelectedIndex(1);
+			}
+			
+		});
 		inputfilters.add(btnApplyFilters);
-		add_dir.setLayout(null);
-		
-		JPanel filteroutput = new JPanel();
-		datafilterr.addTab("View Filter Output", null, filteroutput, null);
 		add_dir.setLayout(null);
 		
 	}

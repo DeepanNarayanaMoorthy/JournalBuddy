@@ -5,6 +5,8 @@ public class LevenshteinDistance {
 	public static int calculate (String string1, String string2) {
 		if(string1==null) string1="";
 		if(string2==null) string2="";
+		string1=string1.toLowerCase();
+		string2=string2.toLowerCase();
 		int[][] distances=new int[string1.length()+1][string2.length()+1];
 		
 		for (int i=1; i<=string1.length();i++) {
