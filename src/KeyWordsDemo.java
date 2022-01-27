@@ -21,7 +21,6 @@ public class KeyWordsDemo {
 		File[] files = new File(TXTfolders).listFiles();
 		for (File file : files) {
 		    if (file.isFile()) {
-		        results.add(file.getAbsolutePath());
 		    }
 		}
 		

@@ -53,7 +53,9 @@ public class DataInserterDemo {
     	    String value = doi_dict.get(keys.get(i));
     	    System.out.print(value);
     	    System.out.println (countt+" Key: " + key + "\nValue: " + value+"\n");
-    	    sampledata.add(DOIParsing.getJournalData(key, value));
+    	    if(value!="") {
+    	    	sampledata.add(DOIParsing.getJournalData(key, value));
+    	    }
     	    TimeUnit.SECONDS.sleep(1);
     	}
     	

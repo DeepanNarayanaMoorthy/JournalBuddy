@@ -104,7 +104,10 @@ public class PDFParserClass
 //                    		System.out.print(arrOfStr[1]);
                     		doi_dict.put(file.getName(), arrOfStr[1].split("\n")[0]);
 //                    		System.out.print("\n");
-                    	}
+                    	} 
+//                    	else {
+//                    		doi_dict.put(file.getName(), "");
+//                    	}
 
                     }
                 }

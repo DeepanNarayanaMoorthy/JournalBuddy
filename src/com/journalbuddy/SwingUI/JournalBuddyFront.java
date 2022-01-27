@@ -7,6 +7,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.journalbuddy.PDFParser.PDFParserClass;
+
 import java.awt.Color;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -20,6 +22,12 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 
@@ -27,8 +35,8 @@ public class JournalBuddyFront extends JFrame {
 
 	private JPanel contentPane;
 	private JTable dirtable;
-	private JTable table;
-
+	private JTable doitable;
+	private String TXTfilesLoc="E:\\Research Papers\\New folder";
 	/**
 	 * Launch the application.
 	 */
@@ -70,23 +78,29 @@ public class JournalBuddyFront extends JFrame {
 		toppanel.add(subtitle);
 		subtitle.setFont(new Font("Yu Gothic UI Light", Font.PLAIN, 22));
 		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(0, 123, 1362, 761);
-		contentPane.add(tabbedPane);
+		JTabbedPane maintabpane = new JTabbedPane(JTabbedPane.TOP);
+		maintabpane.setBounds(0, 123, 1362, 761);
+		contentPane.add(maintabpane);
+		
+		JTabbedPane preprocessing = new JTabbedPane(JTabbedPane.TOP);
+		maintabpane.addTab("Pre-Processing Steps", null, preprocessing, null);
 		
 		JPanel add_dir = new JPanel();
-		tabbedPane.addTab("Add New Directories", null, add_dir, null);
+		preprocessing.addTab("Add New Directories", null, add_dir, null);
 		add_dir.setLayout(null);
 		
-		DefaultTableModel model = new DefaultTableModel(); 
-		model.addColumn("Directories"); 
 		
+		DefaultTableModel model = new DefaultTableModel();
+		model.addColumn("Directories");
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(103, 99, 1168, 588);
 		add_dir.add(scrollPane);
 		dirtable = new JTable(model);
 		scrollPane.setViewportView(dirtable);
-		
+		//FOR DEMO
+		model.addRow(new Object[]{"E:\\Research Papers\\Integrated Circuit"});
+		model.addRow(new Object[]{"E:\\Research Papers\\Image Processing"});
+		//FOR DEMO
 		JButton browsedir = new JButton("Browse Directory");
 		browsedir.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		browsedir.addActionListener(new ActionListener() {
@@ -103,30 +117,63 @@ public class JournalBuddyFront extends JFrame {
 		add_dir.add(browsedir);
 		
 		JPanel parse_files = new JPanel();
-		tabbedPane.addTab("Review Journal Files and DOI", null, parse_files, null);
+		preprocessing.addTab("Review Journal Files and DOI", null, parse_files, null);
 		parse_files.setLayout(null);
 		
-		table = new JTable();
-		table.setBounds(26, 145, 1307, 550);
-		parse_files.add(table);
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(26, 145, 1307, 550);
+		parse_files.add(scrollPane_1);
 		
+		DefaultTableModel doitablemodel = new DefaultTableModel();
+		doitablemodel.addColumn("Directory");
+		doitablemodel.addColumn("File Name");
+		doitablemodel.addColumn("Digital Object Identifier");
+		doitable = new JTable(doitablemodel);
+		
+		scrollPane_1.setViewportView(doitable);
 		JButton retrievedata = new JButton("Retrieve Data");
 		retrievedata.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		retrievedata.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+		    	List<String> directoryName= new ArrayList<String>();
+				for (int count = 0; count < model.getRowCount(); count++){
+					if(model.getValueAt(count, 0).toString()!="") {
+						directoryName.add(model.getValueAt(count, 0).toString());
+					}
+				}
+		    	List<File> filess = new ArrayList<File>();
+		    	directoryName.parallelStream().forEach((directoryNameIter) -> {
+		    		PDFParserClass.listf(directoryNameIter, filess);
+		    	});
+				try {
+					Hashtable<String, String> doi_dict = PDFParserClass.PDFtoTXTMain(directoryName, TXTfilesLoc);
+					for (File filedir : filess) {
+						try {
+							doitablemodel.addRow(new Object[]{filedir.getParent(), filedir.getName(), doi_dict.get(filedir.getName())});
+						} catch (Exception e1) {
+							doitablemodel.addRow(new Object[]{filedir.getParent(), filedir.getName(), "ENTER_DOI_HERE"});
+						}
+					}
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+
+			}
+		});
 		retrievedata.setBounds(277, 44, 199, 60);
 		parse_files.add(retrievedata);
 		
+				
 		JButton fetchtable = new JButton("Fetch Table");
 		fetchtable.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		fetchtable.setBounds(716, 44, 199, 60);
 		parse_files.add(fetchtable);
 		
-		JPanel panel_2 = new JPanel();
-		tabbedPane.addTab("New tab", null, panel_2, null);
+		JPanel wordsearch = new JPanel();
+		maintabpane.addTab("Deep Search for Journals", null, wordsearch, null);
 		
-		JPanel panel_3 = new JPanel();
-		tabbedPane.addTab("New tab", null, panel_3, null);
+		JPanel filtering = new JPanel();
+		maintabpane.addTab("Filter Journal Data", null, filtering, null);
 		
-		JPanel panel_4 = new JPanel();
-		tabbedPane.addTab("New tab", null, panel_4, null);
 	}
 }
