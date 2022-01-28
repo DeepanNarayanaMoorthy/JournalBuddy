@@ -125,7 +125,7 @@ public class JournalBuddyFront extends JFrame {
 		DefaultTableModel model = new DefaultTableModel();
 		model.addColumn("Directories");
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(103, 99, 1168, 588);
+		scrollPane.setBounds(10, 99, 1332, 595);
 		add_dir.add(scrollPane);
 		dirtable = new JTable(model);
 		scrollPane.setViewportView(dirtable);
@@ -153,13 +153,14 @@ public class JournalBuddyFront extends JFrame {
 		parse_files.setLayout(null);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(26, 145, 1307, 550);
+		scrollPane_1.setBounds(10, 145, 1332, 549);
 		parse_files.add(scrollPane_1);
 		
-		DefaultTableModel doitablemodel = new DefaultTableModel();
-		doitablemodel.addColumn("Directory");
-		doitablemodel.addColumn("File Name");
-		doitablemodel.addColumn("Digital Object Identifier");
+		Object[] doitablemodel_colnames= {"Directory", "File Name", "Digital Object Identifier"};
+		DefaultTableModel doitablemodel = new DefaultTableModel(null, doitablemodel_colnames);
+//		doitablemodel.addColumn("Directory");
+//		doitablemodel.addColumn("File Name");
+//		doitablemodel.addColumn();
 		doitable = new JTable(doitablemodel);
 		
 		scrollPane_1.setViewportView(doitable);
@@ -201,23 +202,26 @@ public class JournalBuddyFront extends JFrame {
 		fetchtable.setBounds(716, 44, 199, 60);
 		parse_files.add(fetchtable);
 		
-		JPanel wordsearch = new JPanel();
-		maintabpane.addTab("Deep Search for Journals", null, wordsearch, null);
-		wordsearch.setLayout(null);
+		JTabbedPane wordsearch = new JTabbedPane(JTabbedPane.TOP);
+		maintabpane.addTab("Text Mining and Analysis", null, wordsearch, null);
 		
+		JPanel deepsearchh = new JPanel();
+		wordsearch.addTab("Deep Text Search", null, deepsearchh, null);
+		deepsearchh.setLayout(null);
+				
 		JLabel lblNewLabel = new JLabel("Enter a Word to search: ");
 		lblNewLabel.setFont(new Font("Yu Gothic UI Semilight", Font.PLAIN, 20));
 		lblNewLabel.setBounds(113, 44, 207, 39);
-		wordsearch.add(lblNewLabel);
+		deepsearchh.add(lblNewLabel);
 		
 		wordfield = new JTextField();
 		wordfield.setBounds(330, 51, 730, 34);
-		wordsearch.add(wordfield);
+		deepsearchh.add(wordfield);
 		wordfield.setColumns(10);
 		
 		JTree tree = new JTree();
-		tree.setBounds(113, 150, 1144, 503);
-		wordsearch.add(tree);
+		tree.setBounds(10, 150, 1337, 572);
+		deepsearchh.add(tree);
     	DefaultTreeModel treemodel = (DefaultTreeModel)tree.getModel();
     	DefaultMutableTreeNode root = (DefaultMutableTreeNode)treemodel.getRoot();
 	    root.removeAllChildren();
@@ -259,7 +263,13 @@ public class JournalBuddyFront extends JFrame {
 			}
 			
 		});
-		wordsearch.add(wordsearchbutton);
+		deepsearchh.add(wordsearchbutton);
+		
+		JPanel vocaball = new JPanel();
+		wordsearch.addTab("Analyze Vocabulary on All Journals", null, vocaball, null);
+		
+		JPanel vocabselected = new JPanel();
+		wordsearch.addTab("Analyze Vocabulary on SelectedJournals", null, vocabselected, null);
 		
 		JTabbedPane datafilterr = new JTabbedPane(JTabbedPane.TOP);
 		maintabpane.addTab("Data Filter", null, datafilterr, null);
