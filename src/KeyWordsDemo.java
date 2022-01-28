@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,6 +22,7 @@ public class KeyWordsDemo {
 		File[] files = new File(TXTfolders).listFiles();
 		for (File file : files) {
 		    if (file.isFile()) {
+		    	results.add(file.getAbsolutePath());
 		    }
 		}
 		
@@ -28,5 +30,17 @@ public class KeyWordsDemo {
 		GetKeyWords.WriteToFile(results, vocabsfile, Keywordsfile);
 		ConcurrentHashMap<String, Integer> ReadKeywordsmap=GetKeyWords.ReadKeywords(Keywordsfile);
 		ConcurrentHashMap<String, Word> ReadVocabsmap=GetKeyWords.ReadVocabs(vocabsfile);
+		
+		System.out.println(ReadKeywordsmap.toString());
+		System.out.println(ReadKeywordsmap.size());
+		System.out.println(ReadVocabsmap.size());
+		
+		List<HashMap<String, Word>> finaldisplay= new ArrayList<HashMap<String, Word>>();
+		for (String key : ReadKeywordsmap.keySet()) {
+			HashMap<String, Word> tempmap=new HashMap<String, Word>();
+			tempmap.put(key, ReadVocabsmap.get(key));
+			finaldisplay.add(tempmap);
+		}
+		System.out.println(finaldisplay.size());
 	}
 }

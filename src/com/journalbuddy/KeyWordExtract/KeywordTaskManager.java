@@ -77,7 +77,7 @@ public class KeywordTaskManager implements Runnable {
 			}
 			Collections.sort(keywords);
 
-			if(keywords.size() > 10) keywords = keywords.subList(0, 10);
+			if(keywords.size() > 100) keywords = keywords.subList(0, 100);
 			for (Word word : keywords) {
 			  addKeyword(globalKeywords, word.getWord());
 			}
