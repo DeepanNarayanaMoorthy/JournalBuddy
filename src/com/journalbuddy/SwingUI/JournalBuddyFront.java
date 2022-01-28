@@ -78,6 +78,10 @@ public class JournalBuddyFront extends JFrame {
 	private JTable selectkeytable;
 	private JTable selectvocabtable;
 	private JTable selectentertable;
+	private JTextField selectvocabsearchtext;
+	private JTextField selectkeysearchtext;
+	private JTextField allkeysearchword;
+	private JTextField allvocabsearchword;
 	/**
 	 * Launch the application.
 	 */
@@ -111,7 +115,7 @@ public class JournalBuddyFront extends JFrame {
 		
 		JLabel title = new JLabel("Journal Buddy");
 		title.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 45));
-		title.setBounds(457, 11, 296, 67);
+		title.setBounds(493, 11, 296, 67);
 		toppanel.add(title);
 		
 		JLabel subtitle = new JLabel("An extensive text analysis and management tool for Scientific Journals.");
@@ -290,97 +294,172 @@ public class JournalBuddyFront extends JFrame {
 		wordsearch.addTab("Analyze Vocabulary on All Journals", null, vocaball, null);
 		
 		JPanel allkeywords = new JPanel();
-		vocaball.addTab("Top Keywords from All Documents", null, allkeywords, null);
+		vocaball.addTab("Top Keywords from All Journals", null, allkeywords, null);
 		allkeywords.setLayout(null);
 		
+		JScrollPane scrollPane_5 = new JScrollPane();
+		scrollPane_5.setBounds(10, 106, 1327, 560);
+		allkeywords.add(scrollPane_5);
+		
 		allkeytable = new JTable();
-		allkeytable.setBounds(10, 106, 1327, 560);
-		allkeywords.add(allkeytable);
+		scrollPane_5.setViewportView(allkeytable);
 		
-		JButton allkeyrefresh = new JButton("Refresh Keywords for All Journals");
-		allkeyrefresh.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		allkeyrefresh.setBounds(703, 11, 319, 60);
-		allkeywords.add(allkeyrefresh);
+		JLabel lblSearchInVocabulary_1_1 = new JLabel("Search in Keywords:");
+		lblSearchInVocabulary_1_1.setFont(new Font("Yu Gothic UI Light", Font.PLAIN, 22));
+		lblSearchInVocabulary_1_1.setBounds(10, 46, 211, 44);
+		allkeywords.add(lblSearchInVocabulary_1_1);
 		
-		JButton allkeyshowdata = new JButton("Show Keywords for All Journals");
-		allkeyshowdata.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		allkeyshowdata.setBounds(321, 11, 319, 60);
-		allkeywords.add(allkeyshowdata);
+		allkeysearchword = new JTextField();
+		allkeysearchword.setColumns(10);
+		allkeysearchword.setBounds(224, 40, 346, 60);
+		allkeywords.add(allkeysearchword);
+		
+		JButton allkeysearch = new JButton("Search");
+		allkeysearch.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		allkeysearch.setBounds(580, 40, 99, 60);
+		allkeywords.add(allkeysearch);
+		
+		JButton allShowKeywordsFor = new JButton("Show Keywords for All Journals");
+		allShowKeywordsFor.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		allShowKeywordsFor.setBounds(689, 40, 319, 60);
+		allkeywords.add(allShowKeywordsFor);
+		
+		JButton allRefreshKeywordsFor = new JButton("Refresh Keywords for All Journals");
+		allRefreshKeywordsFor.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		allRefreshKeywordsFor.setBounds(1018, 40, 319, 60);
+		allkeywords.add(allRefreshKeywordsFor);
 		
 		JPanel allvocab = new JPanel();
-		vocaball.addTab("Vocabulary from All Documents", null, allvocab, null);
+		vocaball.addTab("Vocabulary from All Journals", null, allvocab, null);
 		allvocab.setLayout(null);
 		
+		JScrollPane scrollPane_6 = new JScrollPane();
+		scrollPane_6.setBounds(10, 106, 1327, 560);
+		allvocab.add(scrollPane_6);
+		
 		allvoctable = new JTable();
-		allvoctable.setBounds(10, 106, 1327, 560);
-		allvocab.add(allvoctable);
+		scrollPane_6.setViewportView(allvoctable);
 		
-		JButton allvocshowdata = new JButton("Show Vocabulary for All Journals");
-		allvocshowdata.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		allvocshowdata.setBounds(321, 11, 319, 60);
-		allvocab.add(allvocshowdata);
+		JLabel lblSearchInVocabulary_1_1_1 = new JLabel("Search in Vocabulary:");
+		lblSearchInVocabulary_1_1_1.setFont(new Font("Yu Gothic UI Light", Font.PLAIN, 22));
+		lblSearchInVocabulary_1_1_1.setBounds(10, 46, 211, 44);
+		allvocab.add(lblSearchInVocabulary_1_1_1);
 		
-		JButton allvocrefreshdata = new JButton("Refresh Vocabulary for All Journals");
-		allvocrefreshdata.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		allvocrefreshdata.setBounds(703, 11, 319, 60);
-		allvocab.add(allvocrefreshdata);
+		allvocabsearchword = new JTextField();
+		allvocabsearchword.setColumns(10);
+		allvocabsearchword.setBounds(224, 40, 346, 60);
+		allvocab.add(allvocabsearchword);
+		
+		JButton allvocabsearch = new JButton("Search");
+		allvocabsearch.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		allvocabsearch.setBounds(580, 40, 99, 60);
+		allvocab.add(allvocabsearch);
+		
+		JButton allShowVocabularyFor = new JButton("Show Vocabulary for All Journals");
+		allShowVocabularyFor.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		allShowVocabularyFor.setBounds(689, 40, 319, 60);
+		allvocab.add(allShowVocabularyFor);
+		
+		JButton allRefreshVocabularyFor = new JButton("Refresh Vocabulary for All Journals");
+		allRefreshVocabularyFor.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		allRefreshVocabularyFor.setBounds(1018, 40, 319, 60);
+		allvocab.add(allRefreshVocabularyFor);
 		
 		JTabbedPane vocabselected = new JTabbedPane(JTabbedPane.TOP);
-		wordsearch.addTab("Analyze Vocabulary on SelectedJournals", null, vocabselected, null);
+		wordsearch.addTab("Analyze Vocabulary on Selected Journals", null, vocabselected, null);
 		
 		JPanel enterdocs = new JPanel();
-		vocabselected.addTab("Enter Document for Text Analysis", null, enterdocs, null);
+		vocabselected.addTab("Enter Journal Information for Text Analysis", null, enterdocs, null);
 		enterdocs.setLayout(null);
 		
+		JScrollPane scrollPane_7 = new JScrollPane();
+		scrollPane_7.setBounds(10, 106, 1327, 560);
+		enterdocs.add(scrollPane_7);
+		
 		selectentertable = new JTable();
-		selectentertable.setBounds(10, 106, 1327, 560);
-		enterdocs.add(selectentertable);
+		scrollPane_7.setViewportView(selectentertable);
 		
-		JButton selectaddrow = new JButton("Add a Row");
-		selectaddrow.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		selectaddrow.setBounds(321, 11, 319, 60);
-		enterdocs.add(selectaddrow);
+		JButton selecttextaddrow = new JButton("Add a row");
+		selecttextaddrow.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		selecttextaddrow.setBounds(320, 35, 319, 60);
+		enterdocs.add(selecttextaddrow);
 		
-		JButton selectproceed = new JButton("Proceed to Analyze");
-		selectproceed.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		selectproceed.setBounds(703, 11, 319, 60);
-		enterdocs.add(selectproceed);
+		JButton selecttextproceed = new JButton("Proceed for Analysis");
+		selecttextproceed.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		selecttextproceed.setBounds(668, 35, 319, 60);
+		enterdocs.add(selecttextproceed);
 		
 		JPanel selectkeywords = new JPanel();
-		vocabselected.addTab("Top Keywords from Selected Documents", null, selectkeywords, null);
+		vocabselected.addTab("Top Keywords from Selected Journals", null, selectkeywords, null);
 		selectkeywords.setLayout(null);
 		
+		JScrollPane scrollPane_8 = new JScrollPane();
+		scrollPane_8.setBounds(10, 106, 1327, 560);
+		selectkeywords.add(scrollPane_8);
+		
 		selectkeytable = new JTable();
-		selectkeytable.setBounds(10, 106, 1327, 560);
-		selectkeywords.add(selectkeytable);
+		scrollPane_8.setViewportView(selectkeytable);
 		
-		JButton selectkeyshow = new JButton("Show Keywords for Selected Journals");
-		selectkeyshow.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		selectkeyshow.setBounds(321, 11, 319, 60);
-		selectkeywords.add(selectkeyshow);
+		JLabel lblSearchInVocabulary_1 = new JLabel("Search in Keywords:");
+		lblSearchInVocabulary_1.setFont(new Font("Yu Gothic UI Light", Font.PLAIN, 22));
+		lblSearchInVocabulary_1.setBounds(10, 41, 211, 44);
+		selectkeywords.add(lblSearchInVocabulary_1);
 		
-		JButton selectkeyrefresh = new JButton("Refresh Keywords for Selected Journals");
-		selectkeyrefresh.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		selectkeyrefresh.setBounds(703, 11, 319, 60);
-		selectkeywords.add(selectkeyrefresh);
+		selectkeysearchtext = new JTextField();
+		selectkeysearchtext.setColumns(10);
+		selectkeysearchtext.setBounds(224, 35, 346, 60);
+		selectkeywords.add(selectkeysearchtext);
+		
+		JButton selectkeysearch = new JButton("Search");
+		selectkeysearch.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		selectkeysearch.setBounds(580, 35, 99, 60);
+		selectkeywords.add(selectkeysearch);
+		
+		JButton btnShowTopKeywords = new JButton("Show Keywords for Selected Journals");
+		btnShowTopKeywords.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		btnShowTopKeywords.setBounds(689, 35, 319, 60);
+		selectkeywords.add(btnShowTopKeywords);
+		
+		JButton btnRefreshTopKeywords = new JButton("Refresh Keywords for Selected Journals");
+		btnRefreshTopKeywords.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		btnRefreshTopKeywords.setBounds(1018, 35, 319, 60);
+		selectkeywords.add(btnRefreshTopKeywords);
 		
 		JPanel selectvocab = new JPanel();
-		vocabselected.addTab("Vocabulary from Selected Documents", null, selectvocab, null);
+		vocabselected.addTab("Vocabulary from Selected Journals", null, selectvocab, null);
 		selectvocab.setLayout(null);
 		
+		JScrollPane scrollPane_9 = new JScrollPane();
+		scrollPane_9.setBounds(10, 106, 1327, 560);
+		selectvocab.add(scrollPane_9);
+		
 		selectvocabtable = new JTable();
-		selectvocabtable.setBounds(10, 106, 1327, 560);
-		selectvocab.add(selectvocabtable);
+		scrollPane_9.setViewportView(selectvocabtable);
 		
 		JButton selectvocabshow = new JButton("Show Vocabulary for Selected Journals");
+		selectvocabshow.setBounds(689, 35, 319, 60);
 		selectvocabshow.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		selectvocabshow.setBounds(321, 11, 319, 60);
 		selectvocab.add(selectvocabshow);
 		
 		JButton selectvocabrefresh = new JButton("Refresh Vocabulary for Selected Journals");
+		selectvocabrefresh.setBounds(1018, 35, 319, 60);
 		selectvocabrefresh.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		selectvocabrefresh.setBounds(703, 11, 319, 60);
 		selectvocab.add(selectvocabrefresh);
+		
+		JButton selectvocabsearch = new JButton("Search");
+		selectvocabsearch.setBounds(580, 35, 99, 60);
+		selectvocabsearch.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		selectvocab.add(selectvocabsearch);
+		
+		JLabel lblSearchInVocabulary = new JLabel("Search in Vocabulary:");
+		lblSearchInVocabulary.setFont(new Font("Yu Gothic UI Light", Font.PLAIN, 22));
+		lblSearchInVocabulary.setBounds(10, 41, 211, 44);
+		selectvocab.add(lblSearchInVocabulary);
+		
+		selectvocabsearchtext = new JTextField();
+		selectvocabsearchtext.setBounds(224, 35, 346, 60);
+		selectvocab.add(selectvocabsearchtext);
+		selectvocabsearchtext.setColumns(10);
 		
 		
 		JTabbedPane datafilterr = new JTabbedPane(JTabbedPane.TOP);
