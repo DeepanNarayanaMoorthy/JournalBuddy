@@ -115,7 +115,7 @@ public class JournalBuddyFront extends JFrame {
 		toppanel.add(title);
 		
 		JLabel subtitle = new JLabel("An extensive text analysis and management tool for Scientific Journals.");
-		subtitle.setBounds(312, 68, 715, 44);
+		subtitle.setBounds(318, 68, 715, 44);
 		toppanel.add(subtitle);
 		subtitle.setFont(new Font("Yu Gothic UI Light", Font.PLAIN, 22));
 		
@@ -297,14 +297,14 @@ public class JournalBuddyFront extends JFrame {
 		allkeytable.setBounds(10, 106, 1327, 560);
 		allkeywords.add(allkeytable);
 		
-		JButton allkeyrefresh = new JButton("Refresh Data");
+		JButton allkeyrefresh = new JButton("Refresh Keywords for All Journals");
 		allkeyrefresh.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		allkeyrefresh.setBounds(703, 11, 199, 60);
+		allkeyrefresh.setBounds(703, 11, 319, 60);
 		allkeywords.add(allkeyrefresh);
 		
-		JButton allkeyshowdata = new JButton("Show Data");
+		JButton allkeyshowdata = new JButton("Show Keywords for All Journals");
 		allkeyshowdata.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		allkeyshowdata.setBounds(321, 11, 199, 60);
+		allkeyshowdata.setBounds(321, 11, 319, 60);
 		allkeywords.add(allkeyshowdata);
 		
 		JPanel allvocab = new JPanel();
@@ -315,14 +315,14 @@ public class JournalBuddyFront extends JFrame {
 		allvoctable.setBounds(10, 106, 1327, 560);
 		allvocab.add(allvoctable);
 		
-		JButton allvocshowdata = new JButton("Show Data");
+		JButton allvocshowdata = new JButton("Show Vocabulary for All Journals");
 		allvocshowdata.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		allvocshowdata.setBounds(321, 11, 199, 60);
+		allvocshowdata.setBounds(321, 11, 319, 60);
 		allvocab.add(allvocshowdata);
 		
-		JButton allvocrefreshdata = new JButton("Refresh Data");
+		JButton allvocrefreshdata = new JButton("Refresh Vocabulary for All Journals");
 		allvocrefreshdata.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		allvocrefreshdata.setBounds(703, 11, 199, 60);
+		allvocrefreshdata.setBounds(703, 11, 319, 60);
 		allvocab.add(allvocrefreshdata);
 		
 		JTabbedPane vocabselected = new JTabbedPane(JTabbedPane.TOP);
@@ -338,12 +338,12 @@ public class JournalBuddyFront extends JFrame {
 		
 		JButton selectaddrow = new JButton("Add a Row");
 		selectaddrow.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		selectaddrow.setBounds(321, 11, 199, 60);
+		selectaddrow.setBounds(321, 11, 319, 60);
 		enterdocs.add(selectaddrow);
 		
 		JButton selectproceed = new JButton("Proceed to Analyze");
 		selectproceed.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		selectproceed.setBounds(703, 11, 199, 60);
+		selectproceed.setBounds(703, 11, 319, 60);
 		enterdocs.add(selectproceed);
 		
 		JPanel selectkeywords = new JPanel();
@@ -354,14 +354,14 @@ public class JournalBuddyFront extends JFrame {
 		selectkeytable.setBounds(10, 106, 1327, 560);
 		selectkeywords.add(selectkeytable);
 		
-		JButton selectkeyshow = new JButton("Show Data");
+		JButton selectkeyshow = new JButton("Show Keywords for Selected Journals");
 		selectkeyshow.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		selectkeyshow.setBounds(321, 11, 199, 60);
+		selectkeyshow.setBounds(321, 11, 319, 60);
 		selectkeywords.add(selectkeyshow);
 		
-		JButton selectkeyrefresh = new JButton("Refresh Data");
+		JButton selectkeyrefresh = new JButton("Refresh Keywords for Selected Journals");
 		selectkeyrefresh.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		selectkeyrefresh.setBounds(703, 11, 199, 60);
+		selectkeyrefresh.setBounds(703, 11, 319, 60);
 		selectkeywords.add(selectkeyrefresh);
 		
 		JPanel selectvocab = new JPanel();
@@ -372,14 +372,14 @@ public class JournalBuddyFront extends JFrame {
 		selectvocabtable.setBounds(10, 106, 1327, 560);
 		selectvocab.add(selectvocabtable);
 		
-		JButton selectvocabshow = new JButton("Show Data");
+		JButton selectvocabshow = new JButton("Show Vocabulary for Selected Journals");
 		selectvocabshow.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		selectvocabshow.setBounds(321, 11, 199, 60);
+		selectvocabshow.setBounds(321, 11, 319, 60);
 		selectvocab.add(selectvocabshow);
 		
-		JButton selectvocabrefresh = new JButton("Refresh Data");
+		JButton selectvocabrefresh = new JButton("Refresh Vocabulary for Selected Journals");
 		selectvocabrefresh.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		selectvocabrefresh.setBounds(703, 11, 199, 60);
+		selectvocabrefresh.setBounds(703, 11, 319, 60);
 		selectvocab.add(selectvocabrefresh);
 		
 		
