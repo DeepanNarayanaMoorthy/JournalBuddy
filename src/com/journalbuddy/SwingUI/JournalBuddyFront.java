@@ -326,36 +326,8 @@ public class JournalBuddyFront extends JFrame {
 		allkeysearch.setBounds(580, 40, 99, 60);
 		allkeysearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				List<String> wordslist=new ArrayList<String>();
-				for(int i = 0;i<allkeytable.getRowCount();i++) {
-					wordslist.add((String) allkeytable.getValueAt(i, 0));
-				}
-		    	BestMatchingData result=new BestMatchingData();
-				try {
-					result = BestMatchingCalc.getBestMatchingWords(allkeysearchword.getText(), wordslist);
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				} 
-				List<String> results=result.getWords();
-				ConcurrentHashMap<String, Word> ReadVocabsmap = new ConcurrentHashMap<String, Word>();
-				try {
-					ReadVocabsmap = GetKeyWords.ReadVocabs(vocabsfile);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				
-				List<Word> finaldisplay= new ArrayList< Word>();
-				for (String key : results) {
-					finaldisplay.add(ReadVocabsmap.get(key));
-				}	
-				allkeytablemodel.setRowCount(0);
-				for(Word finalkeys: finaldisplay) {
-					allkeytablemodel.addRow(new Object[] {finalkeys.getWord(), finalkeys.getTf(), finalkeys.getDf()});
-				}
-				
-				
+				SupportFun.KeySearchFun(allkeytable, allkeysearchword, vocabsfile, allkeytablemodel);
 			}
-			
 		});
 		allkeywords.add(allkeysearch);
 		
@@ -364,23 +336,7 @@ public class JournalBuddyFront extends JFrame {
 		allShowKeywordsFor.setBounds(689, 40, 319, 60);
 		allShowKeywordsFor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ConcurrentHashMap<String, Integer> ReadKeywordsmap = new ConcurrentHashMap<String, Integer>();
-				ConcurrentHashMap<String, Word> ReadVocabsmap = new ConcurrentHashMap<String, Word>();
-				try {
-					ReadKeywordsmap = GetKeyWords.ReadKeywords(Keywordsfile);
-					ReadVocabsmap = GetKeyWords.ReadVocabs(vocabsfile);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				
-				List<Word> finaldisplay= new ArrayList< Word>();
-				for (String key : ReadKeywordsmap.keySet()) {
-					finaldisplay.add(ReadVocabsmap.get(key));
-				}	
-				allkeytablemodel.setRowCount(0);
-				for(Word finalkeys: finaldisplay) {
-					allkeytablemodel.addRow(new Object[] {finalkeys.getWord(), finalkeys.getTf(), finalkeys.getDf()});
-				}
+				SupportFun.ShowKeywordFun(Keywordsfile, vocabsfile, allkeytablemodel, true);
 			}
 			
 		});
@@ -391,37 +347,7 @@ public class JournalBuddyFront extends JFrame {
 		allRefreshKeywordsFor.setBounds(1018, 40, 319, 60);
 		allRefreshKeywordsFor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				List<String> results = new ArrayList<String>();
-				File[] files = new File(TXTfilesLoc).listFiles();
-				for (File file : files) {
-				    if (file.isFile()) {
-				    	results.add(file.getAbsolutePath());
-				    }
-				}
-		
-				System.out.println(results.toString());
-				try {
-					GetKeyWords.WriteToFile(results, vocabsfile, Keywordsfile);
-				} catch (IOException e2) {
-					e2.printStackTrace();
-				}
-				ConcurrentHashMap<String, Integer> ReadKeywordsmap = new ConcurrentHashMap<String, Integer>();
-				ConcurrentHashMap<String, Word> ReadVocabsmap = new ConcurrentHashMap<String, Word>();
-				try {
-					ReadKeywordsmap = GetKeyWords.ReadKeywords(Keywordsfile);
-					ReadVocabsmap = GetKeyWords.ReadVocabs(vocabsfile);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				
-				List<Word> finaldisplay= new ArrayList< Word>();
-				for (String key : ReadKeywordsmap.keySet()) {
-					finaldisplay.add(ReadVocabsmap.get(key));
-				}	
-				allkeytablemodel.setRowCount(0);
-				for(Word finalkeys: finaldisplay) {
-					allkeytablemodel.addRow(new Object[] {finalkeys.getWord(), finalkeys.getTf(), finalkeys.getDf()});
-				}
+				SupportFun.RefreshKeywordFun(TXTfilesLoc, vocabsfile, Keywordsfile, allkeytablemodel, true);
 			}
 		});
 		allkeywords.add(allRefreshKeywordsFor);
@@ -434,7 +360,8 @@ public class JournalBuddyFront extends JFrame {
 		scrollPane_6.setBounds(10, 106, 1327, 560);
 		allvocab.add(scrollPane_6);
 		
-		allvoctable = new JTable();
+		DefaultTableModel allvoctablemodel = new DefaultTableModel(null, allkeytable_colnames);
+		allvoctable = new JTable(allvoctablemodel);
 		scrollPane_6.setViewportView(allvoctable);
 		
 		JLabel lblSearchInVocabulary_1_1_1 = new JLabel("Search in Vocabulary:");
@@ -450,16 +377,32 @@ public class JournalBuddyFront extends JFrame {
 		JButton allvocabsearch = new JButton("Search");
 		allvocabsearch.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		allvocabsearch.setBounds(580, 40, 99, 60);
+		allvocabsearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SupportFun.KeySearchFun(allvoctable, allvocabsearchword, vocabsfile, allvoctablemodel);
+			}
+		});
 		allvocab.add(allvocabsearch);
 		
 		JButton allShowVocabularyFor = new JButton("Show Vocabulary for All Journals");
 		allShowVocabularyFor.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		allShowVocabularyFor.setBounds(689, 40, 319, 60);
+		allShowVocabularyFor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SupportFun.ShowKeywordFun(Keywordsfile, vocabsfile, allvoctablemodel, false);
+			}
+			
+		});
 		allvocab.add(allShowVocabularyFor);
 		
 		JButton allRefreshVocabularyFor = new JButton("Refresh Vocabulary for All Journals");
 		allRefreshVocabularyFor.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		allRefreshVocabularyFor.setBounds(1018, 40, 319, 60);
+		allRefreshVocabularyFor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SupportFun.RefreshKeywordFun(TXTfilesLoc, vocabsfile, Keywordsfile, allvoctablemodel, false);
+			}
+		});
 		allvocab.add(allRefreshVocabularyFor);
 		
 		JTabbedPane vocabselected = new JTabbedPane(JTabbedPane.TOP);
