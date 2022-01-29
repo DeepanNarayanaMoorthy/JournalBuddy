@@ -17,6 +17,10 @@ import com.journalbuddy.DataFilter.Filter;
 import com.journalbuddy.DataFilter.FilterData;
 import com.journalbuddy.DataFilter.JournalDataLoader;
 import com.journalbuddy.JournalDatabase.JournalData;
+import com.journalbuddy.KeyWordExtract.GetKeyWords;
+import com.journalbuddy.KeyWordExtract.Word;
+import com.journalbuddy.MatchingVocab.BestMatchingCalc;
+import com.journalbuddy.MatchingVocab.BestMatchingData;
 import com.journalbuddy.MatchingVocab.MatchingIndex;
 import com.journalbuddy.PDFParser.PDFParserClass;
 import com.journalbuddy.invertedindexing.InvertedIndexParser;
@@ -49,6 +53,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -301,7 +306,9 @@ public class JournalBuddyFront extends JFrame {
 		scrollPane_5.setBounds(10, 106, 1327, 560);
 		allkeywords.add(scrollPane_5);
 		
-		allkeytable = new JTable();
+		Object[] allkeytable_colnames= {"Word", "TF", "DF"};
+		DefaultTableModel allkeytablemodel = new DefaultTableModel(null, allkeytable_colnames);
+		allkeytable = new JTable(allkeytablemodel);
 		scrollPane_5.setViewportView(allkeytable);
 		
 		JLabel lblSearchInVocabulary_1_1 = new JLabel("Search in Keywords:");
@@ -317,16 +324,106 @@ public class JournalBuddyFront extends JFrame {
 		JButton allkeysearch = new JButton("Search");
 		allkeysearch.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		allkeysearch.setBounds(580, 40, 99, 60);
+		allkeysearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				List<String> wordslist=new ArrayList<String>();
+				for(int i = 0;i<allkeytable.getRowCount();i++) {
+					wordslist.add((String) allkeytable.getValueAt(i, 0));
+				}
+		    	BestMatchingData result=new BestMatchingData();
+				try {
+					result = BestMatchingCalc.getBestMatchingWords(allkeysearchword.getText(), wordslist);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				} 
+				List<String> results=result.getWords();
+				ConcurrentHashMap<String, Word> ReadVocabsmap = new ConcurrentHashMap<String, Word>();
+				try {
+					ReadVocabsmap = GetKeyWords.ReadVocabs(vocabsfile);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
+				List<Word> finaldisplay= new ArrayList< Word>();
+				for (String key : results) {
+					finaldisplay.add(ReadVocabsmap.get(key));
+				}	
+				allkeytablemodel.setRowCount(0);
+				for(Word finalkeys: finaldisplay) {
+					allkeytablemodel.addRow(new Object[] {finalkeys.getWord(), finalkeys.getTf(), finalkeys.getDf()});
+				}
+				
+				
+			}
+			
+		});
 		allkeywords.add(allkeysearch);
 		
 		JButton allShowKeywordsFor = new JButton("Show Keywords for All Journals");
 		allShowKeywordsFor.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		allShowKeywordsFor.setBounds(689, 40, 319, 60);
+		allShowKeywordsFor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ConcurrentHashMap<String, Integer> ReadKeywordsmap = new ConcurrentHashMap<String, Integer>();
+				ConcurrentHashMap<String, Word> ReadVocabsmap = new ConcurrentHashMap<String, Word>();
+				try {
+					ReadKeywordsmap = GetKeyWords.ReadKeywords(Keywordsfile);
+					ReadVocabsmap = GetKeyWords.ReadVocabs(vocabsfile);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
+				List<Word> finaldisplay= new ArrayList< Word>();
+				for (String key : ReadKeywordsmap.keySet()) {
+					finaldisplay.add(ReadVocabsmap.get(key));
+				}	
+				allkeytablemodel.setRowCount(0);
+				for(Word finalkeys: finaldisplay) {
+					allkeytablemodel.addRow(new Object[] {finalkeys.getWord(), finalkeys.getTf(), finalkeys.getDf()});
+				}
+			}
+			
+		});
 		allkeywords.add(allShowKeywordsFor);
 		
 		JButton allRefreshKeywordsFor = new JButton("Refresh Keywords for All Journals");
 		allRefreshKeywordsFor.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		allRefreshKeywordsFor.setBounds(1018, 40, 319, 60);
+		allRefreshKeywordsFor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				List<String> results = new ArrayList<String>();
+				File[] files = new File(TXTfilesLoc).listFiles();
+				for (File file : files) {
+				    if (file.isFile()) {
+				    	results.add(file.getAbsolutePath());
+				    }
+				}
+		
+				System.out.println(results.toString());
+				try {
+					GetKeyWords.WriteToFile(results, vocabsfile, Keywordsfile);
+				} catch (IOException e2) {
+					e2.printStackTrace();
+				}
+				ConcurrentHashMap<String, Integer> ReadKeywordsmap = new ConcurrentHashMap<String, Integer>();
+				ConcurrentHashMap<String, Word> ReadVocabsmap = new ConcurrentHashMap<String, Word>();
+				try {
+					ReadKeywordsmap = GetKeyWords.ReadKeywords(Keywordsfile);
+					ReadVocabsmap = GetKeyWords.ReadVocabs(vocabsfile);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
+				List<Word> finaldisplay= new ArrayList< Word>();
+				for (String key : ReadKeywordsmap.keySet()) {
+					finaldisplay.add(ReadVocabsmap.get(key));
+				}	
+				allkeytablemodel.setRowCount(0);
+				for(Word finalkeys: finaldisplay) {
+					allkeytablemodel.addRow(new Object[] {finalkeys.getWord(), finalkeys.getTf(), finalkeys.getDf()});
+				}
+			}
+		});
 		allkeywords.add(allRefreshKeywordsFor);
 		
 		JPanel allvocab = new JPanel();
