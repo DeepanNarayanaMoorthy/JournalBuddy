@@ -73,24 +73,38 @@ public class JournalBuddyFront extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -9100063317687695082L;
+	
+//	private String TXTfilesLoc="E:\\Research Papers\\New folder";
+//	private String InvertedIndexFile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\op.txt";
+//	private String CSVpathSTR="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\yourfile.csv";
+//	private Path CSVpath = Paths.get(CSVpathSTR);
+//	private String vocabsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\VocabTFs.txt";
+//	private String Keywordsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\KeyWords.txt";
+//	private String Tempvocabsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\TempVocabTFs.txt";
+//	private String TempKeywordsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\TempKeyWords.txt";
+//	private String DefaultDirs="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\DefaultDirs.txt";
+//	private String DatabaseDIR="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db";
+//	private String DatabaseURL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db;create=true";
+
+	private String TXTfilesLoc=System.getProperty("user.dir")+"\\data\\TXTfilesLoc";
+	private String InvertedIndexFile=System.getProperty("user.dir")+"\\data\\InvertedIndexFile.txt";
+	private String CSVpathSTR=System.getProperty("user.dir")+"\\data\\JournalData.csv";
+	private Path CSVpath = Paths.get(CSVpathSTR);
+	private String vocabsfile=System.getProperty("user.dir")+"\\data\\VocabTFs.txt";
+	private String Keywordsfile=System.getProperty("user.dir")+"\\data\\KeyWords.txt";
+	private String Tempvocabsfile=System.getProperty("user.dir")+"\\data\\TempVocabTFs.txt";
+	private String TempKeywordsfile=System.getProperty("user.dir")+"\\data\\TempKeyWords.txt";
+	private String DefaultDirs=System.getProperty("user.dir")+"\\data\\DefaultDirs.txt";
+	private String DatabaseDIR=System.getProperty("user.dir")+"\\data\\db";
+	private String DatabaseURL="jdbc:derby:"+DatabaseDIR+";create=true";
+	
+	List<TableCellEditor> editors = new ArrayList<TableCellEditor>(3);
+	
 	private JPanel contentPane;
 	private JTable dirtable;
 	private JTable doitable;
-	private String TXTfilesLoc="E:\\Research Papers\\New folder";
-	private String InvertedIndexFile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\op.txt";
-	private String CSVpathSTR="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\yourfile.csv";
-	private Path CSVpath = Paths.get(CSVpathSTR);
-	private String vocabsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\VocabTFs.txt";
-	private String Keywordsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\KeyWords.txt";
-	private String Tempvocabsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\TempVocabTFs.txt";
-	private String TempKeywordsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\TempKeyWords.txt";
-	private String DefaultDirs="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\DefaultDirs.txt";
-	private String DatabaseDIR="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db";
-	private String DatabaseURL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db;create=true";
 	private JTextField wordfield;
 	private JTable filterstable;
-	
-	List<TableCellEditor> editors = new ArrayList<TableCellEditor>(3);
 	private JTable finalfiltertable;
 	private JTable allkeytable;
 	private JTable allvoctable;
@@ -146,6 +160,9 @@ public class JournalBuddyFront extends JFrame {
 		maintabpane.setBounds(0, 123, 1362, 761);
 		contentPane.add(maintabpane);
 		
+	    File dir = new File(System.getProperty("user.dir")+"\\data");
+	    if (!dir.exists()) dir.mkdirs();
+	    
 		JTabbedPane preprocessing = new JTabbedPane(JTabbedPane.TOP);
 		maintabpane.addTab("Pre-Processing Steps", null, preprocessing, null);
 		
@@ -163,6 +180,11 @@ public class JournalBuddyFront extends JFrame {
 		scrollPane.setViewportView(dirtable);
 		
 		File f= new File(DefaultDirs);
+		try {
+			f.createNewFile();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
 		if (f.exists()) {
 			try (Stream<String> stream = Files.lines(Paths.get(DefaultDirs))) {
 		        stream.forEach(i -> model.addRow(new Object[]{i}));
@@ -260,6 +282,12 @@ public class JournalBuddyFront extends JFrame {
 		refreshdatabase.setBounds(716, 44, 199, 60);
 		refreshdatabase.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				List<String> filenames=new ArrayList<String>();
+				for(int i = 0;i<doitablemodel.getRowCount();i++) {
+					filenames.add(doitablemodel.getValueAt(i, 1).toString()+".txt");
+				}
+				InsertJournal.RemoveFromTXTFolder(filenames, TXTfilesLoc);
+				
 				File f = new File(DatabaseDIR);
 				if(!f.exists()) {
 					try {
@@ -785,14 +813,16 @@ public class JournalBuddyFront extends JFrame {
 						filter.setLeven_dis(Integer.parseInt(filterstable.getValueAt(i, 3).toString()));
 						filter.setValue((String) filterstable.getValueAt(i, 2).toString());
 						filters.add(filter);
+						System.out.println("ADDED FILTER: "+filterstable.getValueAt(i, 0)+"##"+filterstable.getValueAt(i, 1));
 					} catch (Exception e1) {
 						//INVALID FILTER PARAMETER
 						e1.printStackTrace();
 					}				
 				}
 				List<JournalData> results = ConcurrentSearch.findAll(data, filters, SIZE);
+				
 				for(JournalData resultiter: results) {
-//					System.out.println(resultiter.getTitle());
+					System.out.println(resultiter.toString());
 //					System.out.println(resultiter.getAuthor_firstname());
 					finaltablemodel.setRowCount(0);
 					finaltablemodel.addRow(new Object[] {

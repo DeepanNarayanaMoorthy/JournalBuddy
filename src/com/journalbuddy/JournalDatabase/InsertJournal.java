@@ -33,6 +33,28 @@ public class InsertJournal {
 		return ToReturn;
 	}
 	
+	public static void RemoveFromTXTFolder(List<String> Filenamess, String TXTFilesPath) {
+		List<String> results = new ArrayList<String>();
+		File[] files = new File(TXTFilesPath).listFiles();
+		for (File file : files) {
+		    if (file.isFile()) {
+		    	results.add(file.getName());
+		    }
+		}
+		results.removeAll(Filenamess);
+		
+		if(results.size()>0) {
+			for(String filename: results) {
+				try {
+					File file = new File(TXTFilesPath+"\\"+filename);
+					file.delete();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	public static void RemoveDeletedEntries(String databaseURL, String TXTFilesPath) throws SQLException {
 		List<String> results = new ArrayList<String>();
 		File[] files = new File(TXTFilesPath).listFiles();
@@ -200,7 +222,7 @@ public class InsertJournal {
 		
 		insertstmt.setString(1, journalclass.getFilename());
 		insertstmt.setString(2, journalclass.getDoi());
-		insertstmt.setString(3, journalclass.getTitle());
+		insertstmt.setString(3, journalclass.getTitle().replace(",", "#"));
 		
 		insertstmt.setString(5, journalclass.getContainer_name());
 		insertstmt.setInt(6, journalclass.getVolume());

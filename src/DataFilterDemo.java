@@ -14,7 +14,8 @@ import com.journalbuddy.DataFilter.Filter;
 public class DataFilterDemo {
 
 	public static void main(String[] args) throws IOException {
-		Path path = Paths.get("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\yourfile.csv");
+		String CSVpathSTR=System.getProperty("user.dir")+"\\data\\JournalData.csv";
+		Path path = Paths.get(CSVpathSTR);
 		HashMap<String, Integer> filtercriterias=Filter.GenerateFilterCriteria();
 		JournalData data[] = JournalDataLoader.load(path);
 		System.out.println("Number of items: " + data.length);
@@ -29,12 +30,12 @@ public class DataFilterDemo {
 		filter = new FilterData();
 		filter.setIdField(filtercriterias.get("Author_FirstName##equals"));
 		filter.setLeven_dis(2);
-		filter.setValue("Alessandr");
+		filter.setValue("Xinmiao");
 		filters.add(filter);
 		filter = new FilterData();
 		filter.setIdField(filtercriterias.get("Single_Subject##equals"));
 		filter.setLeven_dis(3);
-		filter.setValue("Electrical and Electronic Engineeri");
+		filter.setValue("General");
 		filters.add(filter);
 
 		System.out.println("filters.size: "+ filters.size());

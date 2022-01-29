@@ -132,9 +132,25 @@ public class DOIParsing {
 	    if (jArray != null) { 
 	       for (int i=0;i<jArray.length();i++){ 
 	    	   HashMap<String, String> temphash=new HashMap<String, String>();
-	    	   temphash.put("given", (String) ((JSONObject) jArray.get(i)).get("given"));
-	    	   temphash.put("family", (String) ((JSONObject) jArray.get(i)).get("family"));
-	    	   temphash.put("sequence", (String) ((JSONObject) jArray.get(i)).get("sequence"));
+	    	   try {
+				temphash.put("given", (String) ((JSONObject) jArray.get(i)).get("given"));
+			} catch (JSONException e) {
+				temphash.put("given","NOT_FOUND");
+				e.printStackTrace();
+			}
+	    	   try {
+				temphash.put("family", (String) ((JSONObject) jArray.get(i)).get("family"));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				temphash.put("family","NOT_FOUND");
+				e.printStackTrace();
+			}
+	    	   try {
+				temphash.put("sequence", (String) ((JSONObject) jArray.get(i)).get("sequence"));
+			} catch (JSONException e) {
+				temphash.put("sequence","NOT_FOUND");
+				e.printStackTrace();
+			}
 	    	   authorshash.add(temphash);
 	       } 
 	    }

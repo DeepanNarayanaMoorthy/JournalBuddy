@@ -1,7 +1,7 @@
 ----------------------------------------------------------------
-Sat Jan 29 19:42:53 IST 2022:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.15.2.0 - (1873585): instance a816c00e-017e-a62e-85be-00003b2e9398 
-on database directory E:\BOOKS DUMP\JAVA\Parallel\MainProjects\db with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93 
+Sat Jan 29 21:20:14 IST 2022:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.15.2.0 - (1873585): instance a816c00e-017e-a687-a5fa-0000190e51c0 
+on database directory C:\Users\deepa\eclipse-workspace\JournalBuddy\data\db with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93 
 Loaded from file:/C:/Users/deepa/eclipse-workspace/JournalBuddy/lib/derby.jar
 java.vendor=Oracle Corporation
 java.runtime.version=17.0.1+12-LTS-39
