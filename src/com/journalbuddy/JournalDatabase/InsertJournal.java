@@ -67,6 +67,7 @@ public class InsertJournal {
 		if(finalToDelete.size()>0) {
 //			System.out.println("goesin");
 			for(String toremove: finalToDelete) {
+				System.out.println("\nRemoved: "+toremove+"\n");
 				authordelete.setString(1,toremove);
 				authordelete.execute();
 				

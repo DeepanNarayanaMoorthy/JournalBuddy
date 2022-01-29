@@ -16,6 +16,8 @@ import com.journalbuddy.DataFilter.ConcurrentSearch;
 import com.journalbuddy.DataFilter.Filter;
 import com.journalbuddy.DataFilter.FilterData;
 import com.journalbuddy.DataFilter.JournalDataLoader;
+import com.journalbuddy.JournalDatabase.DOIParsing;
+import com.journalbuddy.JournalDatabase.InsertJournal;
 import com.journalbuddy.JournalDatabase.JournalData;
 import com.journalbuddy.KeyWordExtract.GetKeyWords;
 import com.journalbuddy.KeyWordExtract.Word;
@@ -49,6 +51,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -74,7 +78,8 @@ public class JournalBuddyFront extends JFrame {
 	private JTable doitable;
 	private String TXTfilesLoc="E:\\Research Papers\\New folder";
 	private String InvertedIndexFile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\op.txt";
-	private Path CSVpath = Paths.get("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\yourfile.csv");
+	private String CSVpathSTR="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\yourfile.csv";
+	private Path CSVpath = Paths.get(CSVpathSTR);
 	private String vocabsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\VocabTFs.txt";
 	private String Keywordsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\KeyWords.txt";
 	private String Tempvocabsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\TempVocabTFs.txt";
@@ -215,6 +220,7 @@ public class JournalBuddyFront extends JFrame {
 		retrievedata.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		retrievedata.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				doitablemodel.setRowCount(0);
 		    	List<String> directoryName= new ArrayList<String>();
 				for (int count = 0; count < model.getRowCount(); count++){
 
@@ -242,7 +248,7 @@ public class JournalBuddyFront extends JFrame {
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-
+				System.out.println(directoryName.toString());
 			}
 		});
 		retrievedata.setBounds(277, 44, 199, 60);
@@ -254,7 +260,59 @@ public class JournalBuddyFront extends JFrame {
 		refreshdatabase.setBounds(716, 44, 199, 60);
 		refreshdatabase.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				File f = new File(DatabaseDIR);
+				if(!f.exists()) {
+					try {
+						InsertJournal.CreateTables(DatabaseURL);
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
 				
+				List<JournalData> sampledata=new ArrayList<JournalData>();
+				 
+				for(int i = 0;i<doitablemodel.getRowCount();i++) {
+					try {
+						String Filename=doitablemodel.getValueAt(i, 1).toString();
+						String FileDOI=doitablemodel.getValueAt(i, 2).toString();
+						if(!InsertJournal.CheckIfFileExists(DatabaseURL, Filename)) {
+							sampledata.add(DOIParsing.getJournalData(Filename, FileDOI));
+						} else {
+							System.out.println("\nFile Exists in database: "+Filename+"\n");
+						}
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
+				
+		        for (int i = 0; i < sampledata.size(); i++) {
+		        	try {
+						InsertJournal.InsertJournalFun(DatabaseURL, sampledata.get(i));
+					} catch (SQLException | ParseException e1) {
+						e1.printStackTrace();
+					}
+		        }
+					
+		        try {
+					InsertJournal.RemoveDeletedEntries(DatabaseURL, TXTfilesLoc);
+					InsertJournal.ExportToCSV(DatabaseURL, CSVpathSTR);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+		        InvertedIndexingMain.GenerateInvertedIndex(TXTfilesLoc,InvertedIndexFile);
+				List<String> results = new ArrayList<String>();
+				File[] files = new File(TXTfilesLoc).listFiles();
+				for (File file : files) {
+				    if (file.isFile()) {
+				    	results.add(file.getAbsolutePath());
+				    }
+				}
+				System.out.println(results.toString());
+				try {
+					GetKeyWords.WriteToFile(results, vocabsfile, Keywordsfile);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 		parse_files.add(refreshdatabase);

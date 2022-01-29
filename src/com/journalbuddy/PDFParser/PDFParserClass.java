@@ -48,7 +48,10 @@ public class PDFParserClass
     	directoryName.parallelStream().forEach((directoryNameIter) -> {
     		listf(directoryNameIter, filess);
     	});
-
+    	
+        File dir = new File(OPFolder);
+        if (!dir.exists()) dir.mkdirs();
+        
     	filess.parallelStream().forEach((filessiter) -> {
     		File file = filessiter;
             try (PDDocument document = Loader.loadPDF(file);)
@@ -61,13 +64,14 @@ public class PDFParserClass
 
                 PDFTextStripper stripper = new PDFTextStripper();
                 stripper.setSortByPosition(true);
-                final String filenamenow=new String(OPFolder+file.getName()+".txt");//+".bin");
+                final String filenamenow=new String(OPFolder+"\\"+file.getName()+".txt");//+".bin");
 				try{
 					File myObj = new File(filenamenow);
 					if (myObj.createNewFile()) {
 						System.out.println("File created: " + myObj.getName());
 					} else {
 						System.out.println("File already exists.");
+						System.out.println(myObj.getAbsolutePath());
 					}
 					} catch (IOException e) {
 						System.out.println("An error occurred.");
