@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
@@ -20,6 +21,66 @@ import com.opencsv.CSVWriter;
 
 
 public class InsertJournal {
+	
+	public static boolean CheckIfFileExists(String databaseURL, String FileName) throws SQLException {
+		Connection conn = DriverManager.getConnection(databaseURL);
+		PreparedStatement insertstmt = conn.prepareStatement("SELECT * FROM journal WHERE journal.filename = ?");
+		insertstmt.setString(1,FileName);
+		ResultSet rs = insertstmt.executeQuery();
+		int rowCount = 0;
+		while(rs.next()) rowCount++;
+		boolean ToReturn=rowCount==0 ? false : true;
+		return ToReturn;
+	}
+	
+	public static void RemoveDeletedEntries(String databaseURL, String TXTFilesPath) throws SQLException {
+		List<String> results = new ArrayList<String>();
+		File[] files = new File(TXTFilesPath).listFiles();
+		for (File file : files) {
+		    if (file.isFile()) {
+		    	results.add(file.getName());
+		    }
+		}
+		Connection conn = DriverManager.getConnection(databaseURL);
+		PreparedStatement insertstmt = conn.prepareStatement("SELECT journal.filename FROM journal");
+		ResultSet rs = insertstmt.executeQuery();
+
+		List<String> DatabaseFiles=new ArrayList<String>();
+		ResultSetMetaData rsmd = rs.getMetaData();
+		int columnsNumber = rsmd.getColumnCount(); 
+		while (rs.next()) {
+			for(int i = 1 ; i <= columnsNumber; i++) {
+				DatabaseFiles.add(rs.getString(i)+".txt");
+			}
+		}
+		DatabaseFiles.removeAll(results);
+		List<String> finalToDelete=new ArrayList<String>();
+		DatabaseFiles.forEach( (filename) -> finalToDelete.add(filename.replace(".txt", "")) );
+//		System.out.println(finalToDelete.toString());
+//		System.out.println(InsertJournal.CheckIfFileExists(databaseURL, finalToDelete.get(0)));
+		
+		PreparedStatement journaldelete = conn.prepareStatement("DELETE FROM journal where journal.filename= ?");
+		PreparedStatement authordelete = conn.prepareStatement("DELETE FROM author_journal where author_journal.fk_journal_id= ?");
+		PreparedStatement funderdelete = conn.prepareStatement("DELETE FROM funder_journal where funder_journal.fk_journal_id= ?");
+		PreparedStatement subjectdelete = conn.prepareStatement("DELETE FROM subject_journal where subject_journal.fk_journal_id= ?");
+		
+		if(finalToDelete.size()>0) {
+//			System.out.println("goesin");
+			for(String toremove: finalToDelete) {
+				authordelete.setString(1,toremove);
+				authordelete.execute();
+				
+				funderdelete.setString(1,toremove);
+				funderdelete.execute();
+				
+				subjectdelete.setString(1,toremove);
+				subjectdelete.execute();
+				
+				journaldelete.setString(1,toremove);
+				journaldelete.execute();
+			}
+		}
+	}
 	
 	public static void ExportToCSV(String databaseURL, String CSVPath) throws SQLException, IOException {
 		Connection conn = DriverManager.getConnection(databaseURL);

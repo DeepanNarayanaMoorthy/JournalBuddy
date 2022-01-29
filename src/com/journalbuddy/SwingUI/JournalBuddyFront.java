@@ -42,8 +42,11 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -54,6 +57,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Stream;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -70,9 +74,14 @@ public class JournalBuddyFront extends JFrame {
 	private JTable doitable;
 	private String TXTfilesLoc="E:\\Research Papers\\New folder";
 	private String InvertedIndexFile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\op.txt";
-	Path CSVpath = Paths.get("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\yourfile.csv");
-	String vocabsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\VocabTFs.txt";
-	String Keywordsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\KeyWords.txt";
+	private Path CSVpath = Paths.get("E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\yourfile.csv");
+	private String vocabsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\VocabTFs.txt";
+	private String Keywordsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\KeyWords.txt";
+	private String Tempvocabsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\TempVocabTFs.txt";
+	private String TempKeywordsfile="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\TempKeyWords.txt";
+	private String DefaultDirs="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\DefaultDirs.txt";
+	private String DatabaseDIR="E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db";
+	private String DatabaseURL="jdbc:derby:E:\\BOOKS DUMP\\JAVA\\Parallel\\MainProjects\\db;create=true";
 	private JTextField wordfield;
 	private JTable filterstable;
 	
@@ -147,10 +156,16 @@ public class JournalBuddyFront extends JFrame {
 		add_dir.add(scrollPane);
 		dirtable = new JTable(model);
 		scrollPane.setViewportView(dirtable);
-		//FOR DEMO
-		model.addRow(new Object[]{"E:\\Research Papers\\Integrated Circuit"});
-		model.addRow(new Object[]{"E:\\Research Papers\\Image Processing"});
-		//FOR DEMO
+		
+		File f= new File(DefaultDirs);
+		if (f.exists()) {
+			try (Stream<String> stream = Files.lines(Paths.get(DefaultDirs))) {
+		        stream.forEach(i -> model.addRow(new Object[]{i}));
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		
 		JButton browsedir = new JButton("Browse Directory");
 		browsedir.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		browsedir.addActionListener(new ActionListener() {
@@ -161,6 +176,20 @@ public class JournalBuddyFront extends JFrame {
 		        f.showSaveDialog(null);
 				DefaultTableModel model=(DefaultTableModel) dirtable.getModel();
 				model.addRow(new Object[]{f.getSelectedFile()});
+				
+		        BufferedWriter bw;
+				try {
+					FileWriter fw = new FileWriter(DefaultDirs);
+					bw = new BufferedWriter(fw);
+					for(int i = 0;i<dirtable.getRowCount();i++) {
+						bw.write((String) dirtable.getValueAt(i, 0).toString()+ System.lineSeparator());
+					}
+					bw.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+		        
+		        
 			}
 		});
 		browsedir.setBounds(583, 28, 199, 60);
@@ -220,10 +249,15 @@ public class JournalBuddyFront extends JFrame {
 		parse_files.add(retrievedata);
 		
 				
-		JButton fetchtable = new JButton("Fetch Table");
-		fetchtable.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		fetchtable.setBounds(716, 44, 199, 60);
-		parse_files.add(fetchtable);
+		JButton refreshdatabase = new JButton("Refresh Database");
+		refreshdatabase.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		refreshdatabase.setBounds(716, 44, 199, 60);
+		refreshdatabase.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		parse_files.add(refreshdatabase);
 		
 		JTabbedPane wordsearch = new JTabbedPane(JTabbedPane.TOP);
 		maintabpane.addTab("Text Mining and Analysis", null, wordsearch, null);
@@ -416,17 +450,46 @@ public class JournalBuddyFront extends JFrame {
 		scrollPane_7.setBounds(10, 106, 1327, 560);
 		enterdocs.add(scrollPane_7);
 		
-		selectentertable = new JTable();
+		Object[] selectentertable_columns= {"File Path"};
+		DefaultTableModel selectentertable_model=new DefaultTableModel(null, selectentertable_columns);
+		selectentertable = new JTable(selectentertable_model);
 		scrollPane_7.setViewportView(selectentertable);
 		
+		//FOR DEMO
+		selectentertable_model.addRow(new Object[] {"E:\\Research Papers\\New folder\\09614070.pdf.txt"});
+		selectentertable_model.addRow(new Object[] {"E:\\Research Papers\\New folder\\Edge-Guided_Dual-Modality_Image_Reconstruction.pdf"});
+		//FOR DEMO
 		JButton selecttextaddrow = new JButton("Add a row");
 		selecttextaddrow.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		selecttextaddrow.setBounds(320, 35, 319, 60);
+		selecttextaddrow.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+		        JFileChooser f = new JFileChooser();
+		        f.setCurrentDirectory(new java.io.File(TXTfilesLoc));
+		        f.setFileSelectionMode(JFileChooser.FILES_ONLY); 
+		        f.showSaveDialog(null);
+				selectentertable_model.addRow(new Object[]{f.getSelectedFile()+".txt"});
+			}
+		});
 		enterdocs.add(selecttextaddrow);
 		
 		JButton selecttextproceed = new JButton("Proceed for Analysis");
 		selecttextproceed.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		selecttextproceed.setBounds(668, 35, 319, 60);
+		selecttextproceed.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				List<String> results = new ArrayList<String>();
+				for(int i = 0;i<selectentertable.getRowCount();i++) {
+					results.add((String) selectentertable_model.getValueAt(i, 0));
+				}
+				try {
+					GetKeyWords.WriteToFile(results, Tempvocabsfile, TempKeywordsfile);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				vocabselected.setSelectedIndex(1);
+			}
+		});
 		enterdocs.add(selecttextproceed);
 		
 		JPanel selectkeywords = new JPanel();
@@ -437,7 +500,8 @@ public class JournalBuddyFront extends JFrame {
 		scrollPane_8.setBounds(10, 106, 1327, 560);
 		selectkeywords.add(scrollPane_8);
 		
-		selectkeytable = new JTable();
+		DefaultTableModel selectkeytable_model=new DefaultTableModel(null, allkeytable_colnames);
+		selectkeytable = new JTable(selectkeytable_model);
 		scrollPane_8.setViewportView(selectkeytable);
 		
 		JLabel lblSearchInVocabulary_1 = new JLabel("Search in Keywords:");
@@ -453,16 +517,42 @@ public class JournalBuddyFront extends JFrame {
 		JButton selectkeysearch = new JButton("Search");
 		selectkeysearch.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		selectkeysearch.setBounds(580, 35, 99, 60);
+		selectkeysearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SupportFun.KeySearchFun(selectkeytable, selectkeysearchtext, Tempvocabsfile, selectkeytable_model);
+			}
+			
+		});
 		selectkeywords.add(selectkeysearch);
 		
 		JButton btnShowTopKeywords = new JButton("Show Keywords for Selected Journals");
 		btnShowTopKeywords.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		btnShowTopKeywords.setBounds(689, 35, 319, 60);
+		btnShowTopKeywords.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SupportFun.ShowKeywordFun(TempKeywordsfile, Tempvocabsfile, selectkeytable_model, true );
+			}
+		});
 		selectkeywords.add(btnShowTopKeywords);
 		
 		JButton btnRefreshTopKeywords = new JButton("Refresh Keywords for Selected Journals");
 		btnRefreshTopKeywords.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
 		btnRefreshTopKeywords.setBounds(1018, 35, 319, 60);
+		btnRefreshTopKeywords.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				List<String> results = new ArrayList<String>();
+				for(int i = 0;i<selectentertable.getRowCount();i++) {
+					results.add((String) selectentertable_model.getValueAt(i, 0));
+				}
+				try {
+					GetKeyWords.WriteToFile(results, Tempvocabsfile, TempKeywordsfile);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				vocabselected.setSelectedIndex(1);
+				SupportFun.ShowKeywordFun(TempKeywordsfile, Tempvocabsfile, selectkeytable_model, true );
+			}
+		});
 		selectkeywords.add(btnRefreshTopKeywords);
 		
 		JPanel selectvocab = new JPanel();
@@ -473,34 +563,59 @@ public class JournalBuddyFront extends JFrame {
 		scrollPane_9.setBounds(10, 106, 1327, 560);
 		selectvocab.add(scrollPane_9);
 		
-		selectvocabtable = new JTable();
+		DefaultTableModel selectvocabtable_model=new DefaultTableModel(null, allkeytable_colnames);
+		selectvocabtable = new JTable(selectvocabtable_model);
 		scrollPane_9.setViewportView(selectvocabtable);
-		
-		JButton selectvocabshow = new JButton("Show Vocabulary for Selected Journals");
-		selectvocabshow.setBounds(689, 35, 319, 60);
-		selectvocabshow.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		selectvocab.add(selectvocabshow);
-		
-		JButton selectvocabrefresh = new JButton("Refresh Vocabulary for Selected Journals");
-		selectvocabrefresh.setBounds(1018, 35, 319, 60);
-		selectvocabrefresh.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		selectvocab.add(selectvocabrefresh);
-		
-		JButton selectvocabsearch = new JButton("Search");
-		selectvocabsearch.setBounds(580, 35, 99, 60);
-		selectvocabsearch.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
-		selectvocab.add(selectvocabsearch);
-		
-		JLabel lblSearchInVocabulary = new JLabel("Search in Vocabulary:");
-		lblSearchInVocabulary.setFont(new Font("Yu Gothic UI Light", Font.PLAIN, 22));
-		lblSearchInVocabulary.setBounds(10, 41, 211, 44);
-		selectvocab.add(lblSearchInVocabulary);
 		
 		selectvocabsearchtext = new JTextField();
 		selectvocabsearchtext.setBounds(224, 35, 346, 60);
 		selectvocab.add(selectvocabsearchtext);
 		selectvocabsearchtext.setColumns(10);
 		
+		JButton selectvocabshow = new JButton("Show Vocabulary for Selected Journals");
+		selectvocabshow.setBounds(689, 35, 319, 60);
+		selectvocabshow.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		selectvocabshow.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SupportFun.ShowKeywordFun(TempKeywordsfile, Tempvocabsfile, selectvocabtable_model, false );
+			}
+		});
+		selectvocab.add(selectvocabshow);
+		
+		JButton selectvocabrefresh = new JButton("Refresh Vocabulary for Selected Journals");
+		selectvocabrefresh.setBounds(1018, 35, 319, 60);
+		selectvocabrefresh.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		selectvocabrefresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				List<String> results = new ArrayList<String>();
+				for(int i = 0;i<selectentertable.getRowCount();i++) {
+					results.add((String) selectentertable_model.getValueAt(i, 0));
+				}
+				try {
+					GetKeyWords.WriteToFile(results, Tempvocabsfile, TempKeywordsfile);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				vocabselected.setSelectedIndex(1);
+				SupportFun.ShowKeywordFun(TempKeywordsfile, Tempvocabsfile, selectvocabtable_model, false );
+			}
+		});
+		selectvocab.add(selectvocabrefresh);
+		
+		JButton selectvocabsearch = new JButton("Search");
+		selectvocabsearch.setBounds(580, 35, 99, 60);
+		selectvocabsearch.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
+		selectvocabsearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SupportFun.KeySearchFun(selectvocabtable, selectvocabsearchtext, Tempvocabsfile, selectvocabtable_model);
+			}
+		});
+		selectvocab.add(selectvocabsearch);
+		
+		JLabel lblSearchInVocabulary = new JLabel("Search in Vocabulary:");
+		lblSearchInVocabulary.setFont(new Font("Yu Gothic UI Light", Font.PLAIN, 22));
+		lblSearchInVocabulary.setBounds(10, 41, 211, 44);
+		selectvocab.add(lblSearchInVocabulary);
 		
 		JTabbedPane datafilterr = new JTabbedPane(JTabbedPane.TOP);
 		maintabpane.addTab("Data Filter", null, datafilterr, null);
@@ -621,7 +736,7 @@ public class JournalBuddyFront extends JFrame {
 				for(JournalData resultiter: results) {
 //					System.out.println(resultiter.getTitle());
 //					System.out.println(resultiter.getAuthor_firstname());
-					finalfiltertable.repaint();
+					finaltablemodel.setRowCount(0);
 					finaltablemodel.addRow(new Object[] {
 							resultiter.getFilename(),
 							resultiter.getDoi(),
