@@ -426,7 +426,7 @@ public class JournalBuddyFront extends JFrame {
 		scrollPane_5.setBounds(10, 106, 1327, 560);
 		allkeywords.add(scrollPane_5);
 		
-		Object[] allkeytable_colnames= {"Word", "TF", "DF"};
+		Object[] allkeytable_colnames= {"Word", "Document Frequency", "Term Frequency"};
 		DefaultTableModel allkeytablemodel = new DefaultTableModel(null, allkeytable_colnames);
 		allkeytable = new JTable(allkeytablemodel);
 		scrollPane_5.setViewportView(allkeytable);
@@ -542,8 +542,8 @@ public class JournalBuddyFront extends JFrame {
 		scrollPane_7.setViewportView(selectentertable);
 		
 		//FOR DEMO
-		selectentertable_model.addRow(new Object[] {"E:\\Research Papers\\New folder\\09614070.pdf.txt"});
-		selectentertable_model.addRow(new Object[] {"E:\\Research Papers\\New folder\\Edge-Guided_Dual-Modality_Image_Reconstruction.pdf"});
+//		selectentertable_model.addRow(new Object[] {"E:\\Research Papers\\New folder\\06076275.pdf.txt"});
+//		selectentertable_model.addRow(new Object[] {"E:\\Research Papers\\New folder\\Edge-Guided_Dual-Modality_Image_Reconstruction.pdf"});
 		//FOR DEMO
 		JButton selecttextaddrow = new JButton("Add a row");
 		selecttextaddrow.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 15));
@@ -554,7 +554,7 @@ public class JournalBuddyFront extends JFrame {
 		        f.setCurrentDirectory(new java.io.File(TXTfilesLoc));
 		        f.setFileSelectionMode(JFileChooser.FILES_ONLY); 
 		        f.showSaveDialog(null);
-				selectentertable_model.addRow(new Object[]{f.getSelectedFile()+".txt"});
+				selectentertable_model.addRow(new Object[]{f.getSelectedFile()});
 			}
 		});
 		enterdocs.add(selecttextaddrow);
@@ -566,7 +566,7 @@ public class JournalBuddyFront extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				List<String> results = new ArrayList<String>();
 				for(int i = 0;i<selectentertable.getRowCount();i++) {
-					results.add((String) selectentertable_model.getValueAt(i, 0));
+					results.add(selectentertable_model.getValueAt(i, 0).toString());
 				}
 				try {
 					GetKeyWords.WriteToFile(results, Tempvocabsfile, TempKeywordsfile);
