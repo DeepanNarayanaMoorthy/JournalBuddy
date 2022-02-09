@@ -202,21 +202,21 @@ public class JournalBuddyFront extends JFrame {
 		        f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
 		        f.showSaveDialog(null);
 				DefaultTableModel model=(DefaultTableModel) dirtable.getModel();
-				model.addRow(new Object[]{f.getSelectedFile()});
-				
-		        BufferedWriter bw;
-				try {
-					FileWriter fw = new FileWriter(DefaultDirs);
-					bw = new BufferedWriter(fw);
-					for(int i = 0;i<dirtable.getRowCount();i++) {
-						bw.write((String) dirtable.getValueAt(i, 0).toString()+ System.lineSeparator());
-					}
-					bw.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-		        
-		        
+				File getfilename=f.getSelectedFile();
+				if (getfilename!=null) {
+					model.addRow(new Object[] { getfilename });
+					BufferedWriter bw;
+					try {
+						FileWriter fw = new FileWriter(DefaultDirs);
+						bw = new BufferedWriter(fw);
+						for (int i = 0; i < dirtable.getRowCount(); i++) {
+							bw.write((String) dirtable.getValueAt(i, 0).toString() + System.lineSeparator());
+						}
+						bw.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					} 
+				} 
 			}
 		});
 		browsedir.setBounds(583, 28, 199, 60);
