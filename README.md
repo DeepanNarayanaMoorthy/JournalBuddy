@@ -1,8 +1,8 @@
-
-
 # Journal Buddy
 
 An application specially designed for research scholars to examine and organise collections of research papers and journals using **tf–idf** based document ranking. This uses **Callable** and **Future** interfaces to construct **inverted index** which is used along with parallelized **Levenshtein** distance algorithm to enable deep text search through a **Map-Reduce model** based on parallel streams.
+
+**Master File**: _/JournalBuddy/src/com/journalbuddy/SwingUI/JournalBuddyFront.java_
 
 This performs text analysis using fork-join pool to generate term frequency, document frequency, and inverse document frequency. This also includes a levenshtein distance-based similarity-based word search.
 
